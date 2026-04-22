@@ -2,145 +2,108 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="내 시간표">
 <meta name="theme-color" content="#0f172a">
 <title>MEDI1101A 내 시간표</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root {
-  --bg: #0f172a;
-  --surface: #1e293b;
-  --surface2: #273449;
-  --border: rgba(255,255,255,0.08);
-  --text: #f1f5f9;
-  --muted: #94a3b8;
-  --accent: #38bdf8;
-  --accent2: #818cf8;
-  --green: #34d399;
-  --amber: #fbbf24;
-  --coral: #fb7185;
-  --radius: 14px;
-  --radius-sm: 8px;
+:root{
+  --bg:#0f172a;--surface:#1e293b;--surface2:#273449;--surface3:#2d3d55;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#f1f5f9;--muted:#94a3b8;--hint:#4e6180;
+  --blue:#38bdf8;--purple:#818cf8;--amber:#fbbf24;--green:#34d399;--coral:#fb7185;
+  --radius:14px;--radius-sm:8px;--radius-xs:6px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;overscroll-behavior:none}
 
-/* Header */
-.header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(15,23,42,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 20px 12px;
-}
-.header-title { font-size: 18px; font-weight: 600; letter-spacing: -0.3px; }
-.header-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.header{position:sticky;top:0;z-index:200;background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 18px 10px}
+.header-title{font-size:17px;font-weight:600;letter-spacing:-0.3px}
+.header-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
-/* Upload */
-.upload-wrap { padding: 24px 20px; }
-.upload-zone {
-  border: 1.5px dashed rgba(56,189,248,0.4);
-  border-radius: var(--radius);
-  padding: 36px 20px;
-  text-align: center;
-  cursor: pointer;
-  background: rgba(56,189,248,0.04);
-  transition: all 0.2s;
-  position: relative;
-}
-.upload-zone:active { background: rgba(56,189,248,0.08); transform: scale(0.99); }
-.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
-.upload-icon {
-  width: 48px; height: 48px; margin: 0 auto 14px;
-  background: rgba(56,189,248,0.12);
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-}
-.upload-icon svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.upload-title { font-size: 16px; font-weight: 500; margin-bottom: 6px; }
-.upload-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
-.upload-hint { margin-top: 20px; font-size: 12px; color: var(--muted); background: var(--surface); border-radius: var(--radius-sm); padding: 10px 14px; line-height: 1.5; }
+.upload-wrap{padding:28px 18px}
+.upload-zone{border:1.5px dashed rgba(56,189,248,0.35);border-radius:var(--radius);padding:40px 20px;text-align:center;cursor:pointer;background:rgba(56,189,248,0.04);position:relative;transition:all 0.15s}
+.upload-zone:active{background:rgba(56,189,248,0.09)}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{width:52px;height:52px;margin:0 auto 16px;background:rgba(56,189,248,0.1);border-radius:14px;display:flex;align-items:center;justify-content:center}
+.upload-icon svg{width:26px;height:26px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.upload-title{font-size:16px;font-weight:500;margin-bottom:6px}
+.upload-sub{font-size:13px;color:var(--muted);line-height:1.6}
+.pwa-hint{margin-top:20px;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:11px 14px;line-height:1.6;text-align:left}
 
-/* File chip */
-.file-chip {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--surface2); border-radius: 999px;
-  padding: 6px 14px; font-size: 13px; color: var(--accent);
-  margin: 0 20px 16px; cursor: pointer;
-}
-.file-chip span { color: var(--muted); }
+.tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(15,23,42,0.8);position:sticky;top:57px;z-index:100;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tab{flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
-/* Section */
-.section { padding: 0 20px 16px; }
-.section-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; }
+.setup{padding:16px 18px 100px}
+.reupload-row{display:flex;align-items:center;margin-bottom:16px}
+.file-chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface2);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--blue);cursor:pointer;border:none;font-family:'DM Sans',sans-serif}
+.file-chip svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 
-/* Tag chips */
-.chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip {
-  font-size: 13px; padding: 6px 13px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  cursor: pointer;
-  background: var(--surface);
-  color: var(--muted);
-  transition: all 0.15s;
-  font-family: 'DM Mono', monospace;
-  white-space: nowrap;
-}
-.chip:active { transform: scale(0.96); }
-.chip.sel-campus { background: rgba(56,189,248,0.15); color: var(--accent); border-color: rgba(56,189,248,0.35); }
-.chip.sel-pbl { background: rgba(129,140,248,0.15); color: var(--accent2); border-color: rgba(129,140,248,0.35); }
-.chip.sel-clin { background: rgba(251,191,36,0.12); color: var(--amber); border-color: rgba(251,191,36,0.3); }
-.chip.sel-all { background: rgba(52,211,153,0.12); color: var(--green); border-color: rgba(52,211,153,0.3); }
-.chip.sel-week { background: rgba(56,189,248,0.15); color: var(--accent); border-color: rgba(56,189,248,0.35); }
+.cat-label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font-size:13px;padding:6px 13px;border-radius:999px;border:1px solid var(--border2);cursor:pointer;background:var(--surface);color:var(--muted);transition:all 0.12s;font-family:'DM Mono',monospace;white-space:nowrap;user-select:none}
+.chip:active{transform:scale(0.95)}
+.chip.s-pbl{background:rgba(129,140,248,0.18);color:var(--purple);border-color:rgba(129,140,248,0.4)}
+.chip.s-clin{background:rgba(251,191,36,0.14);color:var(--amber);border-color:rgba(251,191,36,0.35)}
+.chip.s-cal{background:rgba(56,189,248,0.15);color:var(--blue);border-color:rgba(56,189,248,0.35)}
+.chip.s-cc{background:rgba(52,211,153,0.13);color:var(--green);border-color:rgba(52,211,153,0.3)}
+.chip.s-week{background:rgba(56,189,248,0.15);color:var(--blue);border-color:rgba(56,189,248,0.35)}
+.chip.s-campus-cal{background:rgba(56,189,248,0.15);color:var(--blue);border-color:rgba(56,189,248,0.35)}
+.chip.s-campus-cc{background:rgba(52,211,153,0.13);color:var(--green);border-color:rgba(52,211,153,0.3)}
 
-/* Stats */
-.stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 0 20px 16px; }
-.stat { background: var(--surface); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
-.stat-n { font-size: 22px; font-weight: 600; color: var(--text); }
-.stat-l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.divider{height:1px;background:var(--border);margin:16px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px}
+.stat{background:var(--surface);border-radius:var(--radius-sm);padding:11px;text-align:center}
+.stat-n{font-size:22px;font-weight:600}
+.stat-l{font-size:11px;color:var(--muted);margin-top:1px}
 
-/* Divider */
-.divider { height: 1px; background: var(--border); margin: 4px 20px 16px; }
+.cal-wrap{padding:12px 18px 100px;overflow-x:hidden}
+.week-section{margin-bottom:28px}
+.week-title{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:0.07em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:10px}
+.cal-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border2)}
 
-/* Cards */
-.cards { padding: 0 20px 100px; display: flex; flex-direction: column; gap: 10px; }
-.week-label { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; margin: 8px 0 4px; font-family: 'DM Mono', monospace; }
-.card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
-  padding: 14px 16px;
-  transition: transform 0.1s;
-}
-.card:active { transform: scale(0.99); }
-.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.card-title { font-size: 14px; font-weight: 500; line-height: 1.4; flex: 1; padding-right: 10px; }
-.card-badges { display: flex; gap: 5px; flex-shrink: 0; }
-.badge { font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 500; white-space: nowrap; }
-.b-m { background: rgba(52,211,153,0.15); color: var(--green); }
-.b-o { background: rgba(148,163,184,0.12); color: var(--muted); }
-.b-lab { background: rgba(129,140,248,0.15); color: var(--accent2); }
-.b-lec { background: rgba(56,189,248,0.12); color: var(--accent); }
-.b-pbl { background: rgba(251,191,36,0.12); color: var(--amber); }
-.b-other { background: rgba(148,163,184,0.1); color: var(--muted); }
-.card-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; }
-.meta-item { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
-.meta-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--muted); opacity: 0.4; }
-.card-students { margin-top: 8px; font-size: 11px; font-family: 'DM Mono', monospace; color: rgba(56,189,248,0.7); background: rgba(56,189,248,0.06); border-radius: 6px; padding: 4px 8px; display: inline-block; }
+.cal-grid{display:grid;background:var(--bg)}
+.cal-header{display:grid;background:var(--surface2);border-bottom:1px solid var(--border2)}
+.cal-day-head{padding:8px 4px;text-align:center}
+.day-name{font-size:12px;font-weight:600;color:var(--muted)}
+.day-name.active{color:var(--text)}
+.day-date{font-size:10px;color:var(--hint);margin-top:1px}
 
-/* Empty */
-.empty { text-align: center; padding: 60px 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
-.empty-icon { font-size: 36px; margin-bottom: 12px; }
+.cal-body{display:grid}
+.time-col{}
+.time-cell{height:56px;display:flex;align-items:flex-start;padding:4px 6px 0;font-size:10px;color:var(--hint);font-family:'DM Mono',monospace;border-right:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap}
+.day-col{position:relative;border-right:1px solid var(--border)}
+.day-col:last-child{border-right:none}
+.hour-line{position:absolute;left:0;right:0;height:1px;background:var(--border);pointer-events:none}
+.cal-event{position:absolute;left:2px;right:2px;border-radius:var(--radius-xs);padding:4px 6px;font-size:11px;line-height:1.3;overflow:hidden;cursor:pointer}
+.cal-event:active{opacity:0.7}
+.ev-title{font-weight:500;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ev-time{font-size:10px;opacity:0.75;margin-top:1px;font-family:'DM Mono',monospace}
+.ev-venue{font-size:10px;opacity:0.65;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ev-lab{background:rgba(129,140,248,0.25);color:#c4c9fc;border-left:2px solid var(--purple)}
+.ev-lecture{background:rgba(56,189,248,0.2);color:#a5d8f5;border-left:2px solid var(--blue)}
+.ev-pbl{background:rgba(251,191,36,0.18);color:#f5d97a;border-left:2px solid var(--amber)}
+.ev-other{background:rgba(148,163,184,0.15);color:#cbd5e1;border-left:2px solid var(--hint)}
 
-/* All weeks btn */
-.all-weeks { font-size: 12px; padding: 6px 13px; border-radius: 999px; border: 1px solid var(--border); cursor: pointer; background: var(--surface2); color: var(--accent); font-weight: 500; }
+.empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.8}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:20px 20px 44px;width:100%;max-width:520px;animation:slideup 0.22s ease}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--hint);border-radius:2px;margin:0 auto 16px}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.4}
+.modal-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.modal-row:last-child{border-bottom:none}
+.modal-key{color:var(--muted);flex-shrink:0;margin-right:12px}
+.modal-val{font-weight:500;text-align:right}
+.badge-m{background:rgba(52,211,153,0.15);color:var(--green);padding:3px 10px;border-radius:999px;font-size:12px}
+.badge-o{background:rgba(148,163,184,0.1);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
 </style>
 </head>
 <body>
@@ -157,131 +120,179 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
       <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </div>
     <div class="upload-title">시간표 엑셀 업로드</div>
-    <div class="upload-sub">MEDI1101A_2026_Timetable .xlsx 파일<br>업데이트될 때마다 새로 올리면 돼요</div>
+    <div class="upload-sub">MEDI1101A 시간표 .xlsx 파일<br>업데이트될 때마다 새로 올리면 돼요</div>
   </div>
-  <div class="upload-hint">
-    💡 홈 화면에 추가하면 앱처럼 쓸 수 있어요<br>
-    Safari → 공유 버튼 → "홈 화면에 추가"
-  </div>
+  <div class="pwa-hint">💡 Safari → 공유버튼 → 홈 화면에 추가 하면 앱처럼 써요</div>
 </div>
 
 <div id="appSection" style="display:none">
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 4px">
-    <div class="file-chip" onclick="document.getElementById('reupload').click()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span id="fileName">파일명</span>
+  <div class="tabs">
+    <div class="tab active" id="tabBtn0" onclick="switchTab(0)">내 설정</div>
+    <div class="tab" id="tabBtn1" onclick="switchTab(1)">시간표</div>
+  </div>
+
+  <div id="panel0" class="setup">
+    <div class="reupload-row">
+      <button class="file-chip" onclick="document.getElementById('reupload').click()">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span id="fileName">파일 재업로드</span>
+      </button>
       <input type="file" id="reupload" accept=".xlsx,.xls" style="display:none" onchange="loadFile(event)">
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">Campus</div>
+    <div class="cat-label">Campus</div>
     <div class="chips" id="campusTags"></div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">내 그룹</div>
-    <div class="chips" id="studentTags"></div>
-  </div>
+    <div class="cat-label">PBL 그룹</div>
+    <div class="chips" id="pblTags"></div>
 
-  <div class="section">
-    <div class="section-label">주차</div>
+    <div class="cat-label">CLIN 그룹</div>
+    <div class="chips" id="clinTags"></div>
+
+    <div class="cat-label">Campus ALL — CAL-ALL은 Callaghan 전체, CC-ALL은 Central Coast 전체</div>
+    <div class="chips" id="allTags"></div>
+
+    <div class="divider"></div>
+    <div class="cat-label">주차</div>
     <div class="chips" id="weekTags"></div>
+    <div class="divider"></div>
+    <div class="stats" id="statsRow"></div>
   </div>
 
-  <div class="divider"></div>
-  <div class="stats" id="statsRow"></div>
-  <div class="cards" id="cards"></div>
+  <div id="panel1" style="display:none">
+    <div class="cal-wrap" id="calWrap">
+      <div class="empty">설정 탭에서 그룹을 선택하면<br>시간표가 여기 나와요</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div id="modalBody"></div>
+  </div>
 </div>
 
 <script>
-let allRows=[], selStudents=new Set(), selCampus=new Set(), selWeeks=new Set();
-const DAY_ORDER={Mon:0,Tue:1,Wed:2,Thu:3,Fri:4,Sat:5,Sun:6};
+var allRows=[], selStudents=new Set(), selCampus=new Set(), selWeeks=new Set();
+var cachedFiltered=null;
+var DAYS=['Mon','Tue','Wed','Thu','Fri'];
+var DAY_KO={Mon:'월',Tue:'화',Wed:'수',Thu:'목',Fri:'금'};
+var PX_PER_H=56;
+
+function switchTab(i){
+  [0,1].forEach(function(j){
+    document.getElementById('tabBtn'+j).classList.toggle('active',j===i);
+    document.getElementById('panel'+j).style.display=j===i?'block':'none';
+  });
+  if(i===1) renderCal();
+}
 
 function loadFile(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    const wb=XLSX.read(ev.target.result,{type:'binary',cellDates:true});
-    const ws=wb.Sheets[wb.SheetNames[0]];
-    const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
-    parseData(raw, f.name);
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(ev){
+    var wb=XLSX.read(ev.target.result,{type:'binary',cellDates:true});
+    var ws=wb.Sheets[wb.SheetNames[0]];
+    var raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+    parseData(raw,f.name);
   };
   r.readAsBinaryString(f);
 }
 
-function parseData(raw, fname){
-  const hdrRow=raw.findIndex(r=>r.some(c=>String(c).toLowerCase()==='campus')&&r.some(c=>String(c).toLowerCase().includes('student')));
+function parseData(raw,fname){
+  var hdrRow=-1;
+  for(var i=0;i<raw.length;i++){
+    var r=raw[i];
+    var hasCampus=r.some(function(c){return String(c).toLowerCase()==='campus';});
+    var hasStudent=r.some(function(c){return String(c).toLowerCase().includes('student');});
+    if(hasCampus&&hasStudent){hdrRow=i;break;}
+  }
   if(hdrRow<0){alert('헤더를 찾을 수 없어요.');return;}
-  const hdrs=raw[hdrRow].map(h=>String(h).trim().toLowerCase());
-  const ci={
-    campus: hdrs.findIndex(h=>h==='campus'),
-    week:   hdrs.findIndex(h=>h.includes('week')),
-    day:    hdrs.findIndex(h=>h==='day'),
-    date:   hdrs.findIndex(h=>h==='date'),
-    time:   hdrs.findIndex(h=>h==='time'),
-    students: hdrs.findIndex(h=>h.includes('student')),
-    venue:  hdrs.findIndex(h=>h==='venue'),
-    type:   hdrs.findIndex(h=>h==='type'),
-    domain: hdrs.findIndex(h=>h==='domain'),
-    att:    hdrs.findIndex(h=>h.includes('attend')),
-    activity: hdrs.findIndex(h=>h.includes('name of activity')||h.includes('activity')),
+  var hdrs=raw[hdrRow].map(function(h){return String(h).trim().toLowerCase();});
+  function fi(test){return hdrs.findIndex(function(h){return test(h);});}
+  var ci={
+    campus:fi(function(h){return h==='campus';}),
+    week:fi(function(h){return h.includes('week');}),
+    day:fi(function(h){return h==='day';}),
+    date:fi(function(h){return h==='date';}),
+    time:fi(function(h){return h==='time';}),
+    students:fi(function(h){return h.includes('student');}),
+    venue:fi(function(h){return h==='venue';}),
+    type:fi(function(h){return h==='type';}),
+    domain:fi(function(h){return h==='domain';}),
+    att:fi(function(h){return h.includes('attend');}),
+    activity:fi(function(h){return h.includes('name of activity')||h==='activity';}),
   };
-  const validCampus=['central coast','callaghan'];
+  var validC=['central coast','callaghan'];
   allRows=[];
-  for(let i=hdrRow+1;i<raw.length;i++){
-    const r=raw[i];
-    const campus=String(r[ci.campus]||'').trim().replace(/\n/g,' ').replace(/\s+/g,' ');
-    const cL=campus.toLowerCase();
-    if(!validCampus.some(v=>cL.includes(v))) continue;
-    let dateStr='';
-    const dv=r[ci.date];
+  for(var i=hdrRow+1;i<raw.length;i++){
+    var r=raw[i];
+    var campus=String(r[ci.campus]||'').trim().replace(/\n/g,' ').replace(/\s+/g,' ');
+    var cL=campus.toLowerCase();
+    if(!validC.some(function(v){return cL.includes(v);})) continue;
+    var dateStr='';
+    var dv=r[ci.date];
     if(dv instanceof Date) dateStr=dv.toISOString().slice(0,10);
-    else if(typeof dv==='number'){const d=new Date(Math.round((dv-25569)*86400*1000));dateStr=d.toISOString().slice(0,10);}
+    else if(typeof dv==='number'){var d=new Date(Math.round((dv-25569)*86400*1000));dateStr=d.toISOString().slice(0,10);}
     else dateStr=String(dv||'').slice(0,10);
-    const campusClean=cL.includes('central coast')&&cL.includes('callaghan')?'Callaghan & Central Coast':cL.includes('central coast')?'Central Coast':'Callaghan';
+    var campusClean=(cL.includes('central coast')&&cL.includes('callaghan'))?'Both':cL.includes('central coast')?'Central Coast':'Callaghan';
+    var timeStr=String(r[ci.time]||'').trim();
+    var parsed=parseTimeRange(timeStr);
     allRows.push({
-      campus: campusClean,
-      week:   String(r[ci.week]||'').replace('.0','').trim(),
-      day:    String(r[ci.day]||'').trim(),
-      date:   dateStr,
-      time:   String(r[ci.time]||'').trim(),
-      students: String(r[ci.students]||'').trim(),
-      venue:  String(r[ci.venue]||'').trim(),
-      type:   String(r[ci.type]||'').trim(),
-      domain: String(r[ci.domain]||'').trim(),
-      att:    String(r[ci.att]||'').trim(),
-      activity: String(r[ci.activity]||'').trim(),
+      campus:campusClean, week:String(r[ci.week]||'').replace('.0','').trim(),
+      day:String(r[ci.day]||'').trim(), date:dateStr, time:timeStr,
+      startMin:parsed[0], endMin:parsed[1],
+      students:String(r[ci.students]||'').trim(),
+      venue:String(r[ci.venue]||'').trim(), type:String(r[ci.type]||'').trim(),
+      domain:String(r[ci.domain]||'').trim(), att:String(r[ci.att]||'').trim(),
+      activity:String(r[ci.activity]||'').trim(),
     });
   }
   document.getElementById('uploadSection').style.display='none';
   document.getElementById('appSection').style.display='block';
-  document.getElementById('fileName').textContent=fname.length>28?fname.slice(0,25)+'…':fname;
+  document.getElementById('fileName').textContent=fname.length>24?fname.slice(0,22)+'…':fname;
   document.getElementById('headerSub').textContent=allRows.length+'개 수업 로드됨';
-  selStudents.clear(); selCampus.clear(); selWeeks.clear();
+  selStudents.clear(); selCampus.clear(); selWeeks.clear(); cachedFiltered=null;
   buildFilters();
-  renderCards();
+  renderStats();
+}
+
+function parseTimeRange(t){
+  var m=t.match(/(\d+)(?:\.(\d+))?\s*(am|pm)?.*?(\d+)(?:\.(\d+))?\s*(am|pm)?/i);
+  if(!m) return [0,0];
+  var h1=parseInt(m[1]),mn1=m[2]?parseInt(m[2]):0,ap1=(m[3]||'').toLowerCase();
+  var h2=parseInt(m[4]),mn2=m[5]?parseInt(m[5]):0,ap2=(m[6]||'').toLowerCase();
+  if(ap2==='pm'&&h2<12) h2+=12;
+  if(ap1==='pm'&&h1<12) h1+=12;
+  if(ap1===''&&ap2==='pm'&&h1<12) h1+=12;
+  mn1=mn1>=10?mn1:mn1*6;
+  mn2=mn2>=10?mn2:mn2*6;
+  return [h1*60+mn1, h2*60+mn2];
 }
 
 function normStudents(s){
-  return s.split(',').map(x=>x.trim().toUpperCase().replace(/\s+/g,' ').replace('CAL - ALL','CAL-ALL').replace('CC - ALL','CC-ALL'));
+  return s.split(',').map(function(x){
+    return x.trim().toUpperCase().replace(/\s+/g,' ').replace('CAL - ALL','CAL-ALL').replace('CC - ALL','CC-ALL');
+  });
 }
 
 function rowMatchesStudent(row){
-  const vals=normStudents(row.students);
-  for(const v of vals){
-    if(v==='ALL'||v==='ALL ') return true;
-    if(v==='CAL-ALL'&&selCampus.has('Callaghan')) return true;
-    if(v==='CC-ALL'&&selCampus.has('Central Coast')) return true;
-    for(const sel of selStudents){
-      const selN=sel.toUpperCase().replace(/\s+/g,' ');
+  if(selStudents.size===0) return true;
+  var vals=normStudents(row.students);
+  for(var i=0;i<vals.length;i++){
+    var v=vals[i];
+    if(v==='ALL') return true;
+    if(v==='CAL-ALL'&&(selCampus.has('Callaghan')||selCampus.size===0)) return true;
+    if(v==='CC-ALL'&&(selCampus.has('Central Coast')||selCampus.size===0)) return true;
+    for(var sel of selStudents){
+      var selN=sel.toUpperCase().replace(/\s+/g,' ');
       if(v===selN) return true;
-      if(selN.startsWith('PBL:')){
-        const letter=selN.replace('PBL:','').trim();
-        if(v.startsWith('PBL:')&&v.includes(letter)){
-          const letters=v.replace('PBL:','').split(/[\s,+]+/).map(x=>x.trim());
-          if(letters.includes(letter)) return true;
-        }
+      if(selN.startsWith('PBL:')&&v.startsWith('PBL:')){
+        var letter=selN.replace('PBL:','').trim();
+        var letters=v.replace('PBL:','').split(/[\s,+&]+/).map(function(x){return x.trim();}).filter(Boolean);
+        if(letters.indexOf(letter)>=0) return true;
       }
     }
   }
@@ -289,142 +300,197 @@ function rowMatchesStudent(row){
 }
 
 function getFiltered(){
-  return allRows.filter(row=>{
+  return allRows.filter(function(row){
     if(selCampus.size>0){
-      const c=row.campus;
-      const match=[...selCampus].some(sc=>c.includes(sc));
-      if(!match) return false;
+      var c=row.campus;
+      if(c!=='Both'&&![...selCampus].some(function(sc){return c.includes(sc);})) return false;
     }
     if(selWeeks.size>0&&!selWeeks.has(row.week)) return false;
-    if(selStudents.size===0) return true;
     return rowMatchesStudent(row);
-  }).sort((a,b)=>{
-    const wd=(parseInt(a.week)||0)-(parseInt(b.week)||0);
-    if(wd!==0) return wd;
-    const da=DAY_ORDER[a.day]??9, db=DAY_ORDER[b.day]??9;
-    if(da!==db) return da-db;
-    return a.time.localeCompare(b.time);
   });
 }
 
 function buildFilters(){
-  const campusSet=new Set(), weekSet=new Set(), studentSet=new Set();
-  allRows.forEach(r=>{
-    if(r.campus.includes('&')){campusSet.add('Callaghan');campusSet.add('Central Coast');}
+  var campusSet=new Set(), weekSet=new Set();
+  var pblSingle=new Set(), clinSet=new Set(), allSet=new Set();
+  allRows.forEach(function(r){
+    if(r.campus==='Both'){campusSet.add('Callaghan');campusSet.add('Central Coast');}
     else campusSet.add(r.campus);
     if(r.week) weekSet.add(r.week);
-    normStudents(r.students).forEach(v=>{
-      if(v&&v!=='ALL'&&v!=='ALL ') studentSet.add(v);
+    normStudents(r.students).forEach(function(v){
+      if(!v||v==='ALL') return;
+      if(v.startsWith('PBL:')){
+        var rest=v.replace('PBL:','').trim();
+        if(rest.length<=2&&!rest.includes(',')&&!rest.includes('+')) pblSingle.add(v);
+      } else if(v.startsWith('CLIN:')) clinSet.add(v);
+      else allSet.add(v);
     });
   });
 
-  // Campus
-  const campusEl=document.getElementById('campusTags');
-  campusEl.innerHTML='';
-  [...campusSet].sort().forEach(c=>{
-    const t=mkChip(c,'campus',()=>{
+  var campusEl=document.getElementById('campusTags'); campusEl.innerHTML='';
+  [...campusSet].sort().forEach(function(c){
+    var cls=c.includes('Coast')?'s-campus-cc':'s-campus-cal';
+    var t=makeChip(c);
+    t.onclick=function(){
       if(selCampus.has(c)){selCampus.delete(c);t.className='chip';}
-      else{selCampus.add(c);t.className='chip sel-campus';}
-      renderCards();
-    });
+      else{selCampus.add(c);t.className='chip '+cls;}
+      cachedFiltered=null; renderStats();
+    };
     campusEl.appendChild(t);
   });
 
-  // Students grouped
-  const pbl=[], clin=[], other=[];
-  [...studentSet].sort().forEach(s=>{
-    if(s.startsWith('PBL:')) pbl.push(s);
-    else if(s.startsWith('CLIN:')) clin.push(s);
-    else other.push(s);
-  });
-  const stEl=document.getElementById('studentTags');
-  stEl.innerHTML='';
-  [...other,...pbl,...clin].forEach(s=>{
-    const cls=s.startsWith('PBL:')?'sel-pbl':s.startsWith('CLIN:')?'sel-clin':'sel-all';
-    const t=mkChip(s,'',()=>{
-      if(selStudents.has(s)){selStudents.delete(s);t.className='chip';}
-      else{selStudents.add(s);t.className='chip '+cls;}
-      renderCards();
-    });
-    stEl.appendChild(t);
-  });
+  mkGroupTags('pblTags',[...pblSingle].sort(),'s-pbl','student');
+  mkGroupTags('clinTags',[...clinSet].sort(function(a,b){
+    return (parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0);
+  }),'s-clin','student');
+  mkGroupTags('allTags',[...allSet].sort(),'s-cal','student');
 
-  // Weeks
-  const weekArr=[...weekSet].sort((a,b)=>(parseInt(a)||0)-(parseInt(b)||0));
-  const wkEl=document.getElementById('weekTags');
-  wkEl.innerHTML='';
-  const allBtn=document.createElement('span');
-  allBtn.className='chip sel-campus'; allBtn.textContent='전체';
-  allBtn.onclick=()=>{selWeeks.clear();wkEl.querySelectorAll('[data-week]').forEach(b=>b.className='chip');renderCards();};
-  wkEl.appendChild(allBtn);
-  weekArr.forEach(w=>{
-    const t=document.createElement('span');
-    t.className='chip'; t.textContent='W'+w; t.dataset.week=w;
-    t.onclick=()=>{
+  var wkEl=document.getElementById('weekTags'); wkEl.innerHTML='';
+  var weeks=[...weekSet].sort(function(a,b){return (parseInt(a)||0)-(parseInt(b)||0);});
+  weeks.forEach(function(w){
+    var t=makeChip('W'+w);
+    t.onclick=function(){
       if(selWeeks.has(w)){selWeeks.delete(w);t.className='chip';}
-      else{selWeeks.add(w);t.className='chip sel-week';}
-      renderCards();
+      else{selWeeks.add(w);t.className='chip s-week';}
+      cachedFiltered=null; renderStats();
     };
     wkEl.appendChild(t);
   });
 }
 
-function mkChip(label, selClass, onclick){
-  const t=document.createElement('span');
+function mkGroupTags(elId,list,selCls,kind){
+  var el=document.getElementById(elId); el.innerHTML='';
+  list.forEach(function(s){
+    var t=makeChip(s);
+    t.onclick=function(){
+      if(selStudents.has(s)){selStudents.delete(s);t.className='chip';}
+      else{selStudents.add(s);t.className='chip '+selCls;}
+      cachedFiltered=null; renderStats();
+    };
+    el.appendChild(t);
+  });
+}
+
+function makeChip(label){
+  var t=document.createElement('span');
   t.className='chip'; t.textContent=label;
-  t.onclick=onclick;
   return t;
 }
 
-function typeBadge(type){
-  const t=type.toLowerCase();
-  if(t.includes('lab')) return `<span class="badge b-lab">Lab</span>`;
-  if(t.includes('online lecture')||t.includes('lecture')) return `<span class="badge b-lec">Lecture</span>`;
-  if(t.includes('pbl')) return `<span class="badge b-pbl">PBL</span>`;
-  return `<span class="badge b-other">${type||'—'}</span>`;
+function renderStats(){
+  var rows=getFiltered();
+  document.getElementById('statsRow').innerHTML=
+    '<div class="stat"><div class="stat-n">'+rows.length+'</div><div class="stat-l">수업</div></div>'+
+    '<div class="stat"><div class="stat-n">'+new Set(rows.map(function(r){return r.date;})).size+'</div><div class="stat-l">일자</div></div>'+
+    '<div class="stat"><div class="stat-n">'+rows.filter(function(r){return r.att==='M';}).length+'</div><div class="stat-l">필수</div></div>';
 }
 
-function renderCards(){
-  const rows=getFiltered();
-  const stats=document.getElementById('statsRow');
-  const cards=document.getElementById('cards');
+function evClass(type){
+  var t=(type||'').toLowerCase();
+  if(t.includes('lab')) return 'ev-lab';
+  if(t.includes('lecture')) return 'ev-lecture';
+  if(t.includes('pbl')) return 'ev-pbl';
+  return 'ev-other';
+}
 
-  stats.innerHTML=`
-    <div class="stat"><div class="stat-n">${rows.length}</div><div class="stat-l">수업</div></div>
-    <div class="stat"><div class="stat-n">${new Set(rows.map(r=>r.date)).size}</div><div class="stat-l">일자</div></div>
-    <div class="stat"><div class="stat-n">${rows.filter(r=>r.att==='M').length}</div><div class="stat-l">필수</div></div>
-  `;
+var modalEvents=[];
 
+function renderCal(){
+  var rows=getFiltered();
+  var wrap=document.getElementById('calWrap');
   if(rows.length===0){
-    cards.innerHTML='<div class="empty"><div class="empty-icon">📭</div>그룹을 선택하면<br>내 수업만 보여요</div>';
+    wrap.innerHTML='<div class="empty">설정 탭에서 그룹을 선택하면<br>시간표가 여기 나와요</div>';
     return;
   }
+  var weeks=[...new Set(rows.map(function(r){return r.week;}))].sort(function(a,b){return (parseInt(a)||0)-(parseInt(b)||0);});
+  var html='';
+  modalEvents=[];
 
-  let html='', prevWeek='', prevDay='';
-  rows.forEach(r=>{
-    if(r.week!==prevWeek){
-      html+=`<div class="week-label">Week ${r.week}</div>`;
-      prevWeek=r.week; prevDay='';
+  weeks.forEach(function(wk){
+    var wkRows=rows.filter(function(r){return r.week===wk;});
+    var hasDays=DAYS.filter(function(d){return wkRows.some(function(r){return r.day===d;});});
+    if(hasDays.length===0) return;
+
+    var minH=24,maxH=0;
+    wkRows.forEach(function(r){
+      if(r.startMin>0){minH=Math.min(minH,Math.floor(r.startMin/60));}
+      if(r.endMin>0){maxH=Math.max(maxH,Math.ceil(r.endMin/60));}
+    });
+    if(minH>maxH){minH=8;maxH=18;}
+    minH=Math.max(7,minH);
+    maxH=Math.min(21,maxH+1);
+    var totalH=maxH-minH;
+    var gridH=totalH*PX_PER_H;
+    var colW=Math.max(90,Math.floor(260/hasDays.length));
+    var totalW=44+hasDays.length*colW;
+
+    var dateByDay={};
+    DAYS.forEach(function(d){var dr=wkRows.find(function(r){return r.day===d;});if(dr)dateByDay[d]=dr.date;});
+
+    html+='<div class="week-section"><div class="week-title">Week '+wk+'</div>';
+    html+='<div class="cal-scroll"><div class="cal-grid" style="min-width:'+totalW+'px">';
+
+    // header
+    html+='<div class="cal-header" style="grid-template-columns:44px repeat('+hasDays.length+','+colW+'px)">';
+    html+='<div></div>';
+    hasDays.forEach(function(d){
+      var date=dateByDay[d]?dateByDay[d].slice(5).replace('-','/'):'';
+      var hasClass=wkRows.some(function(r){return r.day===d;});
+      html+='<div class="cal-day-head"><div class="day-name'+(hasClass?' active':'')+'">'+DAY_KO[d]+'</div><div class="day-date">'+date+'</div></div>';
+    });
+    html+='</div>';
+
+    // body
+    html+='<div class="cal-body" style="grid-template-columns:44px repeat('+hasDays.length+','+colW+'px)">';
+    html+='<div>';
+    for(var h=minH;h<maxH;h++){
+      html+='<div class="time-cell">'+h+':00</div>';
     }
-    const attBadge=r.att==='M'?'<span class="badge b-m">필수</span>':'';
-    const dateDisp=r.date?r.date.slice(5).replace('-','/'):'';
-    html+=`<div class="card">
-      <div class="card-top">
-        <div class="card-title">${r.activity||'—'}</div>
-        <div class="card-badges">${attBadge}${typeBadge(r.type)}</div>
-      </div>
-      <div class="card-meta">
-        <span class="meta-item">${r.day} ${dateDisp}</span>
-        <span class="meta-dot"></span>
-        <span class="meta-item">${r.time}</span>
-        ${r.venue?`<span class="meta-dot"></span><span class="meta-item">${r.venue}</span>`:''}
-        ${r.domain?`<span class="meta-dot"></span><span class="meta-item">${r.domain}</span>`:''}
-      </div>
-      ${r.students?`<div class="card-students">${r.students}</div>`:''}
-    </div>`;
+    html+='</div>';
+
+    hasDays.forEach(function(d){
+      html+='<div class="day-col" style="height:'+gridH+'px">';
+      for(var h=minH;h<maxH;h++){
+        html+='<div class="hour-line" style="top:'+((h-minH)*PX_PER_H)+'px"></div>';
+      }
+      var dayRows=wkRows.filter(function(r){return r.day===d&&r.startMin>0;});
+      dayRows.forEach(function(r){
+        var top=Math.max(0,(r.startMin-minH*60)/60*PX_PER_H);
+        var dur=Math.max(24,(r.endMin-r.startMin)/60*PX_PER_H);
+        var ec=evClass(r.type);
+        var idx=modalEvents.length;
+        modalEvents.push(r);
+        html+='<div class="cal-event '+ec+'" style="top:'+top+'px;height:'+dur+'px" onclick="showModal('+idx+')">'+
+          '<div class="ev-title">'+escHtml(r.activity||'—')+'</div>'+
+          '<div class="ev-time">'+escHtml(r.time)+'</div>'+
+          (r.venue?'<div class="ev-venue">'+escHtml(r.venue)+'</div>':'')+
+          '</div>';
+      });
+      html+='</div>';
+    });
+    html+='</div></div></div></div></div>';
   });
-  cards.innerHTML=html;
+
+  wrap.innerHTML=html||'<div class="empty">표시할 수업이 없어요</div>';
 }
+
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function showModal(idx){
+  var r=modalEvents[idx]; if(!r) return;
+  document.getElementById('modalTitle').textContent=r.activity||'수업 정보';
+  document.getElementById('modalBody').innerHTML=
+    row('일시',(DAY_KO[r.day]||r.day)+' '+( r.date?r.date.slice(5).replace('-','/'):'')+'  '+r.time)+
+    row('장소',r.venue||'—')+
+    row('유형',r.type||'—')+
+    row('도메인',r.domain||'—')+
+    '<div class="modal-row"><span class="modal-key">대상</span><span class="modal-val" style="font-family:\'DM Mono\',monospace;font-size:12px">'+escHtml(r.students||'—')+'</span></div>'+
+    '<div class="modal-row"><span class="modal-key">출석</span><span class="modal-val">'+(r.att==='M'?'<span class="badge-m">필수</span>':'<span class="badge-o">선택</span>')+'</span></div>';
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function row(k,v){return '<div class="modal-row"><span class="modal-key">'+k+'</span><span class="modal-val">'+escHtml(v)+'</span></div>';}
+function closeModal(e){if(e.target===document.getElementById('modalBg'))document.getElementById('modalBg').classList.remove('open');}
 </script>
 </body>
 </html>
