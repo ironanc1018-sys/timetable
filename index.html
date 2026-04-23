@@ -273,23 +273,31 @@ function parseData(raw,fname){
     // Date
     var dateStr='';
     var dv=r[ci.date];
-    if(dv instanceof Date) dateStr=dv.toISOString().slice(0,10);
+    function localDateStr(d){
+      var y=d.getFullYear();
+      var m=String(d.getMonth()+1).padStart(2,'0');
+      var dy=String(d.getDate()).padStart(2,'0');
+      return y+'-'+m+'-'+dy;
+    }
+    if(dv instanceof Date) dateStr=localDateStr(dv);
     else if(typeof dv==='number'&&dv>10000){
       var d=new Date(Math.round((dv-25569)*86400*1000));
-      dateStr=d.toISOString().slice(0,10);
+      dateStr=localDateStr(d);
     } else dateStr=String(dv||'').slice(0,10);
 
     // Day - normalize variations
     var rawDay=String(r[ci.day]||'').trim();
     var normDay=DAY_NORM[rawDay.toLowerCase()]||rawDay;
 
-    // If day doesn't match date, use date-derived day (more reliable)
-    if(dateStr&&normDay){
-      var dateObj=new Date(dateStr+'T00:00:00');
+    // Derive day from date using LOCAL timezone (split string, avoid UTC shift)
+    if(dateStr&&dateStr.length>=10){
+      var parts=dateStr.split('-');
+      // Date constructor with year,month,day uses LOCAL time - no UTC shift
+      var dateObj=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
       var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
       var dateDay=dayNames[dateObj.getDay()];
       if(dateDay&&DAYS.indexOf(dateDay)>=0){
-        normDay=dateDay; // trust the date
+        normDay=dateDay; // trust the date (local)
       }
     }
 
@@ -322,31 +330,28 @@ function parseData(raw,fname){
 }
 
 // ── TIME PARSING ──
-// Handles: 9.00am-10.30am, 1.00pm-2.30pm, 10:30am-12md, 8:30am-10.00am, 12md-1:00pm
+// Handles: 9am-12pm, 9.00am-10.30am, 1.00pm-2.30pm, 10:30am-12md, 8:30am-10.00am
 function parseTimeRange(t){
   if(!t||typeof t!=='string') return [0,0,false];
   t=t.trim().toLowerCase();
 
+  // Non-time entries
+  if(t.includes('self')||t.includes('refer')||t.includes('directed')||t.includes('tbc')) return [0,0,false];
+
   // Handle 12md/12noon = 12:00pm
   t=t.replace(/12md/g,'12:00pm').replace(/12noon/g,'12:00pm');
 
-  // Normalize dots to colons in time tokens: 9.00 -> 9:00
-  t=t.replace(/(\d{1,2})\.(\d{2})/g,function(m,h,mn){return h+':'+mn;});
+  // Normalize dots to colons: 9.00 -> 9:00, 10.30 -> 10:30
+  t=t.replace(/(\d{1,2})\.(\d{2})/g,function(_,h,mn){return h+':'+mn;});
 
-  // Extract all time tokens: (hour:min ampm)
+  // Find all time tokens - with OR without minutes: 9am, 9:00am, 10:30pm
   var tokens=[];
-  var re=/(\d{1,2}):(\d{2})\s*(am|pm)?/gi;
+  var re=/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/gi;
   var m;
   while((m=re.exec(t))!==null){
-    tokens.push({h:parseInt(m[1]),mn:parseInt(m[2]),ap:(m[3]||'').toLowerCase(),idx:m.index});
+    tokens.push({h:parseInt(m[1]),mn:m[2]?parseInt(m[2]):0,ap:m[3].toLowerCase()});
   }
   if(tokens.length<2) return [0,0,false];
-
-  var t1=tokens[0], t2=tokens[tokens.length>1?1:0];
-
-  // Determine am/pm for each token
-  // If t2 has pm and t1 doesn't, t1 might also be pm (e.g. 1:00pm - 2:30pm where 1:00 has no am/pm)
-  if(!t1.ap && t2.ap) t1.ap=t2.ap;
 
   function toMin(tok){
     var h=tok.h, mn=tok.mn, ap=tok.ap;
@@ -355,13 +360,11 @@ function parseTimeRange(t){
     return h*60+mn;
   }
 
-  var start=toMin(t1);
-  var end=toMin(t2);
+  var start=toMin(tokens[0]);
+  var end=toMin(tokens[1]);
 
-  // Sanity check: end must be after start; if not, add 12h to end
   if(end<=start) end+=12*60;
-  // Duration must be reasonable (< 8 hours)
-  if(end-start>8*60) end=start+60; // fallback to 1hr
+  if(end-start>8*60) return [0,0,false]; // unreasonable, skip
 
   return [start,end,true];
 }
@@ -620,14 +623,19 @@ function renderCal(){
     var anyDate=null;
     DAYS.forEach(function(d){if(dateByDay[d]) anyDate=dateByDay[d];});
     if(anyDate){
-      var base=new Date(anyDate+'T00:00:00');
-      var dayIdx=base.getDay(); // 0=Sun,1=Mon,...,5=Fri
-      var monOffset=1-dayIdx; // offset to Monday
+      var ap=anyDate.split('-');
+      var base=new Date(parseInt(ap[0]),parseInt(ap[1])-1,parseInt(ap[2]));
+      var dayIdx=base.getDay();
+      var monOffset=1-dayIdx;
       var monDate=new Date(base); monDate.setDate(base.getDate()+monOffset);
       DAYS.forEach(function(d,i){
         if(!dateByDay[d]){
           var dd=new Date(monDate); dd.setDate(monDate.getDate()+i);
-          dateByDay[d]=dd.toISOString().slice(0,10);
+          // Format as YYYY-MM-DD using local date parts
+          var yy=dd.getFullYear();
+          var mm=String(dd.getMonth()+1).padStart(2,'0');
+          var dy=String(dd.getDate()).padStart(2,'0');
+          dateByDay[d]=yy+'-'+mm+'-'+dy;
         }
       });
     }
@@ -678,14 +686,13 @@ function renderCal(){
       // Timed events
       var timedRows=dayRows.filter(function(r){return r.hasTime;});
       timedRows.forEach(function(r){
-        var top=(r.startMin-minH*60)/60*PX_PER_H;
-        var dur=(r.endMin-r.startMin)/60*PX_PER_H;
+        var top=Math.round((r.startMin-minH*60)*PX_PER_H/60);
+        var dur=Math.round((r.endMin-r.startMin)*PX_PER_H/60);
         top=Math.max(0,top);
-        dur=Math.max(20,dur);
-        // clamp to grid
+        dur=Math.max(22,dur);
         if(top+dur>gridH) dur=gridH-top;
         var idx=modalEvents.length; modalEvents.push(r);
-        html+='<div class="cal-event '+evClass(r.type)+'" style="top:'+top.toFixed(1)+'px;height:'+dur.toFixed(1)+'px" onclick="showModal('+idx+')">'+
+        html+='<div class="cal-event '+evClass(r.type)+'" style="top:'+top+'px;height:'+dur+'px" onclick="showModal('+idx+')">'+
           '<div class="ev-title">'+escHtml(r.activity||'—')+'</div>'+
           '<div class="ev-time">'+escHtml(r.time)+'</div>'+
           (r.venue?'<div class="ev-venue">'+escHtml(r.venue)+'</div>':'')+
