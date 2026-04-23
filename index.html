@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="내 시간표">
+<meta name="apple-mobile-web-app-title" content="Timetable">
 <meta name="theme-color" content="#0f172a">
-<title>MEDI1101A 내 시간표</title>
+<title>Timetable</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -39,7 +39,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .tab{flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
 .tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
-/* MY PROFILE CARD */
 .profile-card{margin:16px 18px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border2);overflow:hidden}
 .profile-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
 .profile-header-left{font-size:14px;font-weight:600;color:var(--text)}
@@ -51,11 +50,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .pt-clin{background:rgba(251,191,36,0.15);color:var(--amber);border:1px solid rgba(251,191,36,0.3)}
 .pt-campus{background:rgba(56,189,248,0.15);color:var(--blue);border:1px solid rgba(56,189,248,0.3)}
 .pt-intl{background:rgba(52,211,153,0.13);color:var(--green);border:1px solid rgba(52,211,153,0.28)}
-.pt-all{background:rgba(148,163,184,0.12);color:var(--muted);border:1px solid var(--border2)}
 
-/* PROFILE EDITOR */
-.profile-editor{padding:16px 18px 24px}
-.ed-label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+.profile-editor{padding:16px 18px 100px}
+.ed-label{font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px}
 .ed-label:first-child{margin-top:0}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
 .chip{font-size:13px;padding:6px 13px;border-radius:999px;border:1px solid var(--border2);cursor:pointer;background:var(--surface2);color:var(--muted);transition:all 0.12s;font-family:'DM Mono',monospace;white-space:nowrap;user-select:none}
@@ -68,28 +65,26 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .save-btn{display:block;width:100%;margin-top:20px;padding:13px;background:var(--blue);color:#0f172a;font-size:15px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.15s}
 .save-btn:active{opacity:0.8}
 
-.divider{height:1px;background:var(--border);margin:4px 0}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:0 18px 4px}
 .stat{background:var(--surface);border-radius:var(--radius-sm);padding:11px;text-align:center}
 .stat-n{font-size:22px;font-weight:600}
 .stat-l{font-size:11px;color:var(--muted);margin-top:1px}
 
-/* WEEK FILTER */
 .week-filter-row{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 12px}
 
-/* CALENDAR */
 .cal-wrap{padding:12px 18px 100px}
 .week-section{margin-bottom:28px}
 .week-title{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:0.07em;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:10px}
 .cal-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border2)}
 .cal-grid{display:grid;background:var(--bg)}
 .cal-header{display:grid;background:var(--surface2);border-bottom:1px solid var(--border2)}
-.cal-day-head{padding:8px 4px;text-align:center}
-.day-name{font-size:12px;font-weight:600;color:var(--muted)}
-.day-name.active{color:var(--text)}
+.cal-day-head{padding:8px 4px;text-align:center;border-right:1px solid var(--border)}
+.cal-day-head:last-child{border-right:none}
+.day-name{font-size:12px;font-weight:600;color:var(--hint)}
+.day-name.has-class{color:var(--text)}
 .day-date{font-size:10px;color:var(--hint);margin-top:1px}
 .cal-body{display:grid}
-.time-cell{height:56px;display:flex;align-items:flex-start;padding:4px 6px 0;font-size:10px;color:var(--hint);font-family:'DM Mono',monospace;border-right:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap}
+.time-cell{height:56px;display:flex;align-items:flex-start;padding:4px 5px 0;font-size:10px;color:var(--hint);font-family:'DM Mono',monospace;border-right:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap}
 .day-col{position:relative;border-right:1px solid var(--border)}
 .day-col:last-child{border-right:none}
 .hour-line{position:absolute;left:0;right:0;height:1px;background:var(--border);pointer-events:none}
@@ -102,6 +97,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .ev-lecture{background:rgba(56,189,248,0.2);color:#a5d8f5;border-left:2px solid var(--blue)}
 .ev-pbl{background:rgba(251,191,36,0.18);color:#f5d97a;border-left:2px solid var(--amber)}
 .ev-other{background:rgba(148,163,184,0.15);color:#cbd5e1;border-left:2px solid var(--hint)}
+.ev-notime{background:rgba(100,100,120,0.18);color:#94a3b8;border-left:2px solid var(--hint);font-size:10px;padding:3px 5px}
 
 .empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.9}
 
@@ -126,11 +122,10 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 <body>
 
 <div class="header">
-  <div class="header-title">MEDI1101A 내 시간표</div>
+  <div class="header-title">Timetable</div>
   <div class="header-sub" id="headerSub">파일을 업로드해서 시작하세요</div>
 </div>
 
-<!-- UPLOAD -->
 <div id="uploadSection" class="upload-wrap">
   <div class="upload-zone">
     <input type="file" accept=".xlsx,.xls" onchange="loadFile(event)">
@@ -143,16 +138,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
   <div class="pwa-hint">💡 Safari → 공유버튼 → 홈 화면에 추가 하면 앱처럼 써요</div>
 </div>
 
-<!-- MAIN APP -->
 <div id="appSection" style="display:none">
   <div class="tabs">
     <div class="tab active" id="tabBtn0" onclick="switchTab(0)">내 시간표</div>
     <div class="tab" id="tabBtn1" onclick="switchTab(1)">설정</div>
   </div>
 
-  <!-- TAB 0: 시간표 -->
   <div id="panel0">
-    <!-- MY PROFILE CARD -->
     <div class="profile-card" id="profileCard">
       <div class="profile-header">
         <div>
@@ -162,24 +154,18 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
         <div class="profile-edit-btn" onclick="switchTab(1)">편집</div>
       </div>
       <div class="profile-groups" id="profileGroups">
-        <span style="font-size:13px;color:var(--hint);padding:2px 0">아직 선택된 그룹이 없어요</span>
+        <span style="font-size:13px;color:var(--hint)">아직 선택된 그룹이 없어요</span>
       </div>
     </div>
 
-    <!-- WEEK FILTER -->
     <div class="week-filter-row" id="weekFilterRow"></div>
-
-    <!-- STATS -->
     <div class="stats" id="statsRow"></div>
     <div style="height:12px"></div>
-
-    <!-- CALENDAR -->
     <div class="cal-wrap" id="calWrap">
       <div class="empty">설정에서 내 그룹을 선택하면<br>시간표가 여기 나와요</div>
     </div>
   </div>
 
-  <!-- TAB 1: 설정 -->
   <div id="panel1" style="display:none">
     <div class="reupload-row">
       <button class="file-chip" onclick="document.getElementById('reupload').click()">
@@ -188,7 +174,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
       </button>
       <input type="file" id="reupload" accept=".xlsx,.xls" style="display:none" onchange="loadFile(event)">
     </div>
-    <div class="profile-editor" id="profileEditor">
+    <div class="profile-editor">
       <div class="ed-label">Campus</div>
       <div class="chips" id="ed-campus"></div>
       <div class="ed-label">PBL 그룹</div>
@@ -202,7 +188,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
   </div>
 </div>
 
-<!-- EVENT MODAL -->
 <div class="modal-bg" id="modalBg" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -212,15 +197,25 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 </div>
 
 <script>
-var allRows=[], selStudents=new Set(), selCampus=new Set(), selWeeks=new Set();
-var modalEvents=[];
-var DAYS=['Mon','Tue','Wed','Thu','Fri'];
-var DAY_KO={Mon:'월',Tue:'화',Wed:'수',Thu:'목',Fri:'금'};
-var PX_PER_H=56;
+var allRows = [];
+var selStudents = new Set();  // stores PBL:G, CLIN:7 etc
+var selCampus = new Set();    // stores 'Callaghan', 'Central Coast'
+var selIntl = false;
+var selWeeks = new Set();
+var modalEvents = [];
+var PX_PER_H = 56;
 
-// ── 사용자 프로필 (저장됨) ──
-var profile = {campus:'', pbl:'', clin:'', intl:false};
-try { var saved=localStorage.getItem('medi_profile'); if(saved) profile=JSON.parse(saved); } catch(e){}
+// Normalize day abbreviations to Mon/Tue/Wed/Thu/Fri
+var DAY_NORM = {
+  'mon':'Mon','tue':'Tue','tues':'Tue','wed':'Wed','thu':'Thu','thur':'Thu','thurs':'Thu','fri':'Fri',
+  'mon ':'Mon','tue ':'Tue','wed ':'Wed','thu ':'Thu','fri ':'Fri'
+};
+var DAYS = ['Mon','Tue','Wed','Thu','Fri'];
+var DAY_KO = {Mon:'월',Tue:'화',Wed:'수',Thu:'목',Fri:'금'};
+
+// Saved profile
+var profile = {campus:'',pbl:'',clin:'',intl:false};
+try { var s=localStorage.getItem('medi_profile'); if(s) profile=JSON.parse(s); } catch(e){}
 
 function switchTab(i){
   [0,1].forEach(function(j){
@@ -245,24 +240,24 @@ function parseData(raw,fname){
   var hdrRow=-1;
   for(var i=0;i<raw.length;i++){
     var r=raw[i];
-    if(r.some(function(c){return String(c).toLowerCase()==='campus';})&&
+    if(r.some(function(c){return String(c).trim().toLowerCase()==='campus';})&&
        r.some(function(c){return String(c).toLowerCase().includes('student');})){hdrRow=i;break;}
   }
   if(hdrRow<0){alert('헤더를 찾을 수 없어요.');return;}
   var hdrs=raw[hdrRow].map(function(h){return String(h).trim().toLowerCase();});
-  function fi(test){return hdrs.findIndex(function(h){return test(h);});}
+  function fi(fn){return hdrs.findIndex(fn);}
   var ci={
-    campus:fi(function(h){return h==='campus';}),
-    week:fi(function(h){return h.includes('week');}),
-    day:fi(function(h){return h==='day';}),
-    date:fi(function(h){return h==='date';}),
-    time:fi(function(h){return h==='time';}),
-    students:fi(function(h){return h.includes('student');}),
-    venue:fi(function(h){return h==='venue';}),
-    type:fi(function(h){return h==='type';}),
-    domain:fi(function(h){return h==='domain';}),
-    att:fi(function(h){return h.includes('attend');}),
-    activity:fi(function(h){return h.includes('name of activity')||h==='activity';}),
+    campus: fi(function(h){return h==='campus';}),
+    week:   fi(function(h){return h.includes('week');}),
+    day:    fi(function(h){return h==='day';}),
+    date:   fi(function(h){return h==='date';}),
+    time:   fi(function(h){return h==='time';}),
+    students: fi(function(h){return h.includes('student');}),
+    venue:  fi(function(h){return h==='venue';}),
+    type:   fi(function(h){return h==='type';}),
+    domain: fi(function(h){return h==='domain';}),
+    att:    fi(function(h){return h.includes('attend');}),
+    activity: fi(function(h){return h.includes('name of activity')||h==='activity';}),
   };
   allRows=[];
   for(var i=hdrRow+1;i<raw.length;i++){
@@ -270,150 +265,240 @@ function parseData(raw,fname){
     var campus=String(r[ci.campus]||'').trim().replace(/\n/g,' ').replace(/\s+/g,' ');
     var cL=campus.toLowerCase();
     if(!cL.includes('callaghan')&&!cL.includes('central coast')) continue;
+
+    // Normalize campus
+    var campusClean=(cL.includes('callaghan')&&cL.includes('central coast'))?'Both':
+                    cL.includes('central coast')?'Central Coast':'Callaghan';
+
+    // Date
     var dateStr='';
     var dv=r[ci.date];
     if(dv instanceof Date) dateStr=dv.toISOString().slice(0,10);
-    else if(typeof dv==='number'){var d=new Date(Math.round((dv-25569)*86400*1000));dateStr=d.toISOString().slice(0,10);}
-    else dateStr=String(dv||'').slice(0,10);
-    var campusClean=(cL.includes('callaghan')&&cL.includes('central coast'))?'Both':cL.includes('central coast')?'Central Coast':'Callaghan';
+    else if(typeof dv==='number'&&dv>10000){
+      var d=new Date(Math.round((dv-25569)*86400*1000));
+      dateStr=d.toISOString().slice(0,10);
+    } else dateStr=String(dv||'').slice(0,10);
+
+    // Day - normalize variations
+    var rawDay=String(r[ci.day]||'').trim();
+    var normDay=DAY_NORM[rawDay.toLowerCase()]||rawDay;
+
+    // If day doesn't match date, use date-derived day (more reliable)
+    if(dateStr&&normDay){
+      var dateObj=new Date(dateStr+'T00:00:00');
+      var dayNames=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      var dateDay=dayNames[dateObj.getDay()];
+      if(dateDay&&DAYS.indexOf(dateDay)>=0){
+        normDay=dateDay; // trust the date
+      }
+    }
+
     var timeStr=String(r[ci.time]||'').trim();
     var parsed=parseTimeRange(timeStr);
+    var studentsRaw=String(r[ci.students]||'').trim();
+
     allRows.push({
       campus:campusClean, week:String(r[ci.week]||'').replace('.0','').trim(),
-      day:String(r[ci.day]||'').trim(), date:dateStr, time:timeStr,
-      startMin:parsed[0], endMin:parsed[1],
-      students:String(r[ci.students]||'').trim(),
+      day:normDay, date:dateStr, time:timeStr,
+      startMin:parsed[0], endMin:parsed[1], hasTime:parsed[2],
+      students:studentsRaw,
+      studentsNorm:normalizeStudents(studentsRaw),
       venue:String(r[ci.venue]||'').trim(), type:String(r[ci.type]||'').trim(),
       domain:String(r[ci.domain]||'').trim(), att:String(r[ci.att]||'').trim(),
       activity:String(r[ci.activity]||'').trim(),
     });
   }
+
   document.getElementById('uploadSection').style.display='none';
   document.getElementById('appSection').style.display='block';
   document.getElementById('fileName').textContent=fname.length>24?fname.slice(0,22)+'…':fname;
   document.getElementById('headerSub').textContent=allRows.length+'개 수업 로드됨';
+
+  selStudents.clear(); selCampus.clear(); selIntl=false; selWeeks.clear();
   buildEditorChips();
   applyProfile();
   renderWeekFilter();
   renderCal();
 }
 
+// ── TIME PARSING ──
+// Handles: 9.00am-10.30am, 1.00pm-2.30pm, 10:30am-12md, 8:30am-10.00am, 12md-1:00pm
 function parseTimeRange(t){
-  var m=t.match(/(\d+)(?:\.(\d+))?\s*(am|pm)?.*?(\d+)(?:\.(\d+))?\s*(am|pm)?/i);
-  if(!m) return [0,0];
-  var h1=parseInt(m[1]),mn1=m[2]?parseInt(m[2]):0,ap1=(m[3]||'').toLowerCase();
-  var h2=parseInt(m[4]),mn2=m[5]?parseInt(m[5]):0,ap2=(m[6]||'').toLowerCase();
-  if(ap2==='pm'&&h2<12) h2+=12;
-  if(ap1==='pm'&&h1<12) h1+=12;
-  if(ap1===''&&ap2==='pm'&&h1<12) h1+=12;
-  mn1=mn1>9?mn1:mn1*6; mn2=mn2>9?mn2:mn2*6;
-  return [h1*60+mn1, h2*60+mn2];
+  if(!t||typeof t!=='string') return [0,0,false];
+  t=t.trim().toLowerCase();
+
+  // Handle 12md/12noon = 12:00pm
+  t=t.replace(/12md/g,'12:00pm').replace(/12noon/g,'12:00pm');
+
+  // Normalize dots to colons in time tokens: 9.00 -> 9:00
+  t=t.replace(/(\d{1,2})\.(\d{2})/g,function(m,h,mn){return h+':'+mn;});
+
+  // Extract all time tokens: (hour:min ampm)
+  var tokens=[];
+  var re=/(\d{1,2}):(\d{2})\s*(am|pm)?/gi;
+  var m;
+  while((m=re.exec(t))!==null){
+    tokens.push({h:parseInt(m[1]),mn:parseInt(m[2]),ap:(m[3]||'').toLowerCase(),idx:m.index});
+  }
+  if(tokens.length<2) return [0,0,false];
+
+  var t1=tokens[0], t2=tokens[tokens.length>1?1:0];
+
+  // Determine am/pm for each token
+  // If t2 has pm and t1 doesn't, t1 might also be pm (e.g. 1:00pm - 2:30pm where 1:00 has no am/pm)
+  if(!t1.ap && t2.ap) t1.ap=t2.ap;
+
+  function toMin(tok){
+    var h=tok.h, mn=tok.mn, ap=tok.ap;
+    if(ap==='pm'&&h!==12) h+=12;
+    if(ap==='am'&&h===12) h=0;
+    return h*60+mn;
+  }
+
+  var start=toMin(t1);
+  var end=toMin(t2);
+
+  // Sanity check: end must be after start; if not, add 12h to end
+  if(end<=start) end+=12*60;
+  // Duration must be reasonable (< 8 hours)
+  if(end-start>8*60) end=start+60; // fallback to 1hr
+
+  return [start,end,true];
 }
 
-// ── 매칭 로직 ──
-// rowStudentsNorm: 셀 값을 정규화된 토큰 배열로 변환
-function rowStudentsNorm(s){
-  return s.split(',').map(function(x){
-    return x.trim().toUpperCase()
-      .replace(/\s+/g,' ')
-      .replace('CAL - ALL','CAL-ALL')
-      .replace('CC - ALL','CC-ALL')
-      .replace('CAL  -  ALL','CAL-ALL')
-      .replace('CC  -  ALL','CC-ALL');
+// ── STUDENT NORMALIZATION ──
+// Returns array of canonical tokens from a Students cell
+// Handles: "PBL: E,G,I,K,M,N,O,P", "CLIN: 1 &Clin: 2, 1-4", "CAL-ALL", "ALL", "International Students"
+function normalizeStudents(s){
+  if(!s) return [];
+  var tokens=[];
+  var raw=s.trim();
+
+  // Step 1: Extract PBL multi-letter blocks BEFORE splitting by comma
+  // e.g. "PBL: E,G,I,K,M,N,O,P" must be handled as one unit
+  var pblBlockRe=/PBL:\s*([A-Z](?:\s*,\s*[A-Z])+)/gi;
+  raw=raw.replace(pblBlockRe,function(match,letters){
+    letters.split(',').forEach(function(l){
+      l=l.trim().toUpperCase();
+      if(l) tokens.push('PBL:'+l);
+    });
+    return '';
   });
+
+  // Step 2: Split remainder by & then by comma
+  var ampParts=raw.split('&');
+  ampParts.forEach(function(part){
+    var commaParts=part.split(',');
+    commaParts.forEach(function(sp){
+      sp=sp.trim().replace(/\s+/g,' ');
+      if(!sp) return;
+      sp=sp.replace(/\s+\d+-\d+$/,'').trim();
+      if(!sp) return;
+      sp=sp.replace(/CAL\s*-\s*ALL/gi,'CAL-ALL').replace(/CC\s*-\s*ALL/gi,'CC-ALL');
+
+      var clinMatch=sp.match(/^CLIN:\s*(\d+)/i);
+      if(clinMatch){ tokens.push('CLIN:'+clinMatch[1]); return; }
+
+      // PBL: A+D 1-4 type (combined groups) - extract first letter
+      var pblPlus=sp.match(/^PBL:\s*([A-Z])\s*[+&]/i);
+      if(pblPlus){ tokens.push('PBL:'+pblPlus[1].toUpperCase()); return; }
+      var pblSingle=sp.match(/^PBL:\s*([A-Z])$/i);
+      if(pblSingle){ tokens.push('PBL:'+pblSingle[1].toUpperCase()); return; }
+
+      var up=sp.toUpperCase().replace(/\s+/g,'');
+      if(up==='ALL'){ tokens.push('ALL'); return; }
+      if(up==='CAL-ALL'){ tokens.push('CAL-ALL'); return; }
+      if(up==='CC-ALL'){ tokens.push('CC-ALL'); return; }
+      if(sp.toLowerCase().includes('international')){ tokens.push('INTL'); return; }
+    });
+  });
+
+  return tokens.filter(function(v,i,a){ return a.indexOf(v)===i; });
 }
 
+// ── ROW MATCHING ──
 function rowMatches(row){
-  var vals=rowStudentsNorm(row.students);
-  // ALL은 항상 포함
-  if(vals.some(function(v){return v==='ALL'||v==='ALL ';})) return true;
-  // campus 체크
+  var tokens=row.studentsNorm;
+
+  // ALL always matches
+  if(tokens.indexOf('ALL')>=0) return true;
+
+  // Campus filter
+  var campusOk=true;
   if(selCampus.size>0){
     var c=row.campus;
-    if(c!=='Both'&&![...selCampus].some(function(sc){return c.includes(sc);})) return false;
+    campusOk=(c==='Both'||[...selCampus].some(function(sc){return c.includes(sc);}));
+    if(!campusOk) return false;
   }
-  // CAL-ALL: Callaghan 캠퍼스면 포함
-  if(vals.some(function(v){return v==='CAL-ALL';})&&
-    (selCampus.has('Callaghan')||selCampus.size===0)) return true;
-  // CC-ALL: Central Coast면 포함
-  if(vals.some(function(v){return v==='CC-ALL';})&&
-    (selCampus.has('Central Coast')||selCampus.size===0)) return true;
+
+  // CAL-ALL matches if Callaghan selected (or no campus filter)
+  if(tokens.indexOf('CAL-ALL')>=0&&(selCampus.has('Callaghan')||selCampus.size===0)) return true;
+  // CC-ALL matches if Central Coast selected (or no campus filter)
+  if(tokens.indexOf('CC-ALL')>=0&&(selCampus.has('Central Coast')||selCampus.size===0)) return true;
+
   // International
-  if(selStudents.has('INTL')){
-    if(vals.some(function(v){return v.toLowerCase().includes('international');})) return true;
-  }
-  // PBL / CLIN 매칭
+  if(selIntl&&tokens.indexOf('INTL')>=0) return true;
+
+  // PBL / CLIN
   for(var sel of selStudents){
-    if(sel==='INTL') continue;
-    var selN=sel.toUpperCase().replace(/\s+/g,' ');
-    for(var i=0;i<vals.length;i++){
-      var v=vals[i];
-      if(v===selN) return true;
-      // PBL: G → PBL: E,G,I,K,M,N,O,P 같은 묶음 매칭
-      if(selN.startsWith('PBL:')&&v.startsWith('PBL:')){
-        var letter=selN.replace('PBL:','').trim();
-        var letters=v.replace('PBL:','').split(/[\s,+&]+/).map(function(x){return x.trim();}).filter(Boolean);
-        if(letters.indexOf(letter)>=0) return true;
-      }
-    }
+    if(tokens.indexOf(sel)>=0) return true;
   }
   return false;
 }
 
 function getFiltered(){
-  if(selStudents.size===0&&selCampus.size===0) return [];
+  if(selStudents.size===0&&selCampus.size===0&&!selIntl) return [];
   return allRows.filter(function(row){
     if(selWeeks.size>0&&!selWeeks.has(row.week)) return false;
     return rowMatches(row);
   });
 }
 
-// ── 설정 탭: 칩 빌드 ──
+// ── EDITOR CHIP BUILDER ──
 function buildEditorChips(){
-  var pblSet=new Set(), clinSet=new Set(), intlSet=new Set();
+  var pblSet=new Set(), clinNums=new Set(), hasIntl=false;
+
   allRows.forEach(function(r){
-    rowStudentsNorm(r.students).forEach(function(v){
-      if(!v) return;
+    r.studentsNorm.forEach(function(v){
       if(v.startsWith('PBL:')){
-        var rest=v.replace('PBL:','').trim();
-        // 단일 알파벳만 (A~T)
-        if(/^[A-Z]{1,2}$/.test(rest)) pblSet.add(v);
+        var l=v.replace('PBL:','');
+        if(/^[A-T]$/.test(l)) pblSet.add(v);
       } else if(v.startsWith('CLIN:')){
-        clinSet.add(v.replace(/\s+/g,'').replace('CLIN:','CLIN: ').replace('CLIN:  ','CLIN: '));
-      } else if(v.toLowerCase().includes('international')){
-        intlSet.add(v);
-      }
+        clinNums.add(parseInt(v.replace('CLIN:',''))||0);
+      } else if(v==='INTL') hasIntl=true;
     });
   });
 
   mkEdChips('ed-campus',['Callaghan','Central Coast'],'campus','s-campus');
   mkEdChips('ed-pbl',[...pblSet].sort(),'student','s-pbl');
-  mkEdChips('ed-clin',[...clinSet].sort(function(a,b){
-    return (parseInt(a.replace(/\D/g,''))||0)-(parseInt(b.replace(/\D/g,''))||0);
-  }),'student','s-clin');
-  // International 통합 토큰
-  mkEdChips('ed-intl',['International Students'],'intl','s-intl');
+  var clinList=[...clinNums].sort(function(a,b){return a-b;}).map(function(n){return 'CLIN:'+n;});
+  mkEdChips('ed-clin',clinList,'student','s-clin');
+  if(hasIntl){
+    mkEdChips('ed-intl',['International Students'],'intl','s-intl');
+  }
 
-  // 저장된 프로필 복원
   restoreChipState();
 }
 
-function mkEdChips(elId, list, kind, selCls){
+function mkEdChips(elId,list,kind,selCls){
   var el=document.getElementById(elId); el.innerHTML='';
   list.forEach(function(s){
     var t=document.createElement('span');
-    t.className='chip'; t.textContent=s; t.dataset.val=s; t.dataset.kind=kind;
+    t.className='chip';
+    // Display label
+    t.textContent=(kind==='intl')?'International Students':s;
+    t.dataset.val=s; t.dataset.kind=kind;
     t.onclick=function(){
-      var isOn=t.classList.contains(selCls);
-      if(isOn){
+      var cls=t.classList.contains(selCls);
+      if(cls){
         t.className='chip';
         if(kind==='campus') selCampus.delete(s);
-        else if(kind==='intl') selStudents.delete('INTL');
+        else if(kind==='intl'){selIntl=false;}
         else selStudents.delete(s);
       } else {
         t.className='chip '+selCls;
         if(kind==='campus') selCampus.add(s);
-        else if(kind==='intl') selStudents.add('INTL');
+        else if(kind==='intl'){selIntl=true;}
         else selStudents.add(s);
       }
     };
@@ -422,35 +507,25 @@ function mkEdChips(elId, list, kind, selCls){
 }
 
 function restoreChipState(){
-  if(!profile.campus&&!profile.pbl&&!profile.clin&&!profile.intl) return;
-  // campus
-  if(profile.campus){
-    profile.campus.split(',').forEach(function(c){
-      c=c.trim();
-      var chip=document.querySelector('#ed-campus [data-val="'+c+'"]');
-      if(chip){chip.className='chip s-campus';selCampus.add(c);}
-    });
-  }
-  // pbl
-  if(profile.pbl){
-    profile.pbl.split(',').forEach(function(p){
-      p=p.trim();
-      var chip=document.querySelector('#ed-pbl [data-val="'+p+'"]');
-      if(chip){chip.className='chip s-pbl';selStudents.add(p);}
-    });
-  }
-  // clin
-  if(profile.clin){
-    profile.clin.split(',').forEach(function(c){
-      c=c.trim();
-      var chip=document.querySelector('#ed-clin [data-val="'+c+'"]');
-      if(chip){chip.className='chip s-clin';selStudents.add(c);}
-    });
-  }
-  // intl
+  if(profile.campus) profile.campus.split(',').forEach(function(c){
+    c=c.trim(); if(!c) return;
+    var el=document.querySelector('#ed-campus [data-val="'+c+'"]');
+    if(el){el.className='chip s-campus';selCampus.add(c);}
+  });
+  if(profile.pbl) profile.pbl.split(',').forEach(function(p){
+    p=p.trim(); if(!p) return;
+    var el=document.querySelector('#ed-pbl [data-val="'+p+'"]');
+    if(el){el.className='chip s-pbl';selStudents.add(p);}
+  });
+  if(profile.clin) profile.clin.split(',').forEach(function(c){
+    c=c.trim(); if(!c) return;
+    var el=document.querySelector('#ed-clin [data-val="'+c+'"]');
+    if(el){el.className='chip s-clin';selStudents.add(c);}
+  });
   if(profile.intl){
-    var chip=document.querySelector('#ed-intl [data-val="International Students"]');
-    if(chip){chip.className='chip s-intl';selStudents.add('INTL');}
+    selIntl=true;
+    var el=document.querySelector('#ed-intl [data-val="International Students"]');
+    if(el) el.className='chip s-intl';
   }
 }
 
@@ -458,7 +533,7 @@ function saveProfile(){
   profile.campus=[...selCampus].join(',');
   profile.pbl=[...selStudents].filter(function(s){return s.startsWith('PBL:');}).join(',');
   profile.clin=[...selStudents].filter(function(s){return s.startsWith('CLIN:');}).join(',');
-  profile.intl=selStudents.has('INTL');
+  profile.intl=selIntl;
   try{localStorage.setItem('medi_profile',JSON.stringify(profile));}catch(e){}
   applyProfile();
   renderWeekFilter();
@@ -467,19 +542,16 @@ function saveProfile(){
 }
 
 function applyProfile(){
-  // 프로필 카드 업데이트
   var groups=document.getElementById('profileGroups');
   var tags=[];
-  selCampus.forEach(function(c){
-    tags.push('<span class="profile-tag pt-campus">'+escHtml(c)+'</span>');
-  });
+  selCampus.forEach(function(c){tags.push('<span class="profile-tag pt-campus">'+escHtml(c)+'</span>');});
   selStudents.forEach(function(s){
-    if(s==='INTL') tags.push('<span class="profile-tag pt-intl">International</span>');
-    else if(s.startsWith('PBL:')) tags.push('<span class="profile-tag pt-pbl">'+escHtml(s)+'</span>');
+    if(s.startsWith('PBL:')) tags.push('<span class="profile-tag pt-pbl">'+escHtml(s)+'</span>');
     else if(s.startsWith('CLIN:')) tags.push('<span class="profile-tag pt-clin">'+escHtml(s)+'</span>');
   });
+  if(selIntl) tags.push('<span class="profile-tag pt-intl">International</span>');
   if(tags.length===0){
-    groups.innerHTML='<span style="font-size:13px;color:var(--hint);padding:2px 0">아직 선택된 그룹이 없어요</span>';
+    groups.innerHTML='<span style="font-size:13px;color:var(--hint)">아직 선택된 그룹이 없어요</span>';
     document.getElementById('profileSub').textContent='설정에서 그룹을 선택하세요';
   } else {
     groups.innerHTML=tags.join('');
@@ -491,7 +563,6 @@ function renderWeekFilter(){
   var weeks=[...new Set(allRows.map(function(r){return r.week;}))].filter(Boolean)
     .sort(function(a,b){return (parseInt(a)||0)-(parseInt(b)||0);});
   var el=document.getElementById('weekFilterRow'); el.innerHTML='';
-  if(weeks.length===0) return;
   var allBtn=document.createElement('span');
   allBtn.className='chip s-week'; allBtn.textContent='전체 주차';
   allBtn.onclick=function(){
@@ -540,70 +611,128 @@ function renderCal(){
 
   weeks.forEach(function(wk){
     var wkRows=rows.filter(function(r){return r.week===wk;});
-    var hasDays=DAYS.filter(function(d){return wkRows.some(function(r){return r.day===d;});});
-    if(!hasDays.length) return;
 
-    var minH=24,maxH=0;
-    wkRows.forEach(function(r){
-      if(r.startMin>0) minH=Math.min(minH,Math.floor(r.startMin/60));
-      if(r.endMin>0) maxH=Math.max(maxH,Math.ceil(r.endMin/60));
+    // Build date lookup: day -> date string (from actual data)
+    var dateByDay={};
+    wkRows.forEach(function(r){if(!dateByDay[r.day]&&r.date) dateByDay[r.day]=r.date;});
+    // For days with no class, try to infer date from adjacent days
+    // Find any date in this week and derive Mon date
+    var anyDate=null;
+    DAYS.forEach(function(d){if(dateByDay[d]) anyDate=dateByDay[d];});
+    if(anyDate){
+      var base=new Date(anyDate+'T00:00:00');
+      var dayIdx=base.getDay(); // 0=Sun,1=Mon,...,5=Fri
+      var monOffset=1-dayIdx; // offset to Monday
+      var monDate=new Date(base); monDate.setDate(base.getDate()+monOffset);
+      DAYS.forEach(function(d,i){
+        if(!dateByDay[d]){
+          var dd=new Date(monDate); dd.setDate(monDate.getDate()+i);
+          dateByDay[d]=dd.toISOString().slice(0,10);
+        }
+      });
+    }
+
+    // Time range for this week
+    var minH=23, maxH=8;
+    wkRows.filter(function(r){return r.hasTime;}).forEach(function(r){
+      minH=Math.min(minH,Math.floor(r.startMin/60));
+      maxH=Math.max(maxH,Math.ceil(r.endMin/60));
     });
     if(minH>maxH){minH=8;maxH=18;}
-    minH=Math.max(7,minH); maxH=Math.min(21,maxH+1);
-    var totalH=maxH-minH, gridH=totalH*PX_PER_H;
-    var colW=Math.max(88,Math.floor(260/hasDays.length));
-    var totalW=44+hasDays.length*colW;
-    var dateByDay={};
-    wkRows.forEach(function(r){if(!dateByDay[r.day]) dateByDay[r.day]=r.date;});
+    minH=Math.max(7,minH);
+    maxH=Math.min(21,maxH+1);
+    var totalH=maxH-minH;
+    var gridH=totalH*PX_PER_H;
+
+    // Always show Mon-Fri
+    var colW=Math.max(70,Math.floor(260/5));
+    var totalW=44+5*colW;
 
     html+='<div class="week-section"><div class="week-title">Week '+wk+'</div>';
     html+='<div class="cal-scroll"><div class="cal-grid" style="min-width:'+totalW+'px">';
-    html+='<div class="cal-header" style="grid-template-columns:44px repeat('+hasDays.length+','+colW+'px)">';
+
+    // Header: always Mon-Fri
+    html+='<div class="cal-header" style="grid-template-columns:44px repeat(5,'+colW+'px)">';
     html+='<div></div>';
-    hasDays.forEach(function(d){
+    DAYS.forEach(function(d){
       var date=dateByDay[d]?dateByDay[d].slice(5).replace('-','/'):'';
-      html+='<div class="cal-day-head"><div class="day-name active">'+DAY_KO[d]+'</div><div class="day-date">'+date+'</div></div>';
+      var hasClass=wkRows.some(function(r){return r.day===d;});
+      html+='<div class="cal-day-head"><div class="day-name'+(hasClass?' has-class':'')+'">'+DAY_KO[d]+'</div><div class="day-date">'+date+'</div></div>';
     });
     html+='</div>';
-    html+='<div class="cal-body" style="grid-template-columns:44px repeat('+hasDays.length+','+colW+'px)">';
+
+    // Body
+    html+='<div class="cal-body" style="grid-template-columns:44px repeat(5,'+colW+'px)">';
+    // Time column
     html+='<div>';
     for(var h=minH;h<maxH;h++) html+='<div class="time-cell">'+h+':00</div>';
     html+='</div>';
-    hasDays.forEach(function(d){
+
+    // Day columns - always Mon-Fri
+    DAYS.forEach(function(d){
       html+='<div class="day-col" style="height:'+gridH+'px">';
       for(var h=minH;h<maxH;h++) html+='<div class="hour-line" style="top:'+((h-minH)*PX_PER_H)+'px"></div>';
-      var dayRows=wkRows.filter(function(r){return r.day===d&&r.startMin>0;});
-      dayRows.forEach(function(r){
-        var top=Math.max(0,(r.startMin-minH*60)/60*PX_PER_H);
-        var dur=Math.max(24,(r.endMin-r.startMin)/60*PX_PER_H);
+
+      var dayRows=wkRows.filter(function(r){return r.day===d;});
+
+      // Timed events
+      var timedRows=dayRows.filter(function(r){return r.hasTime;});
+      timedRows.forEach(function(r){
+        var top=(r.startMin-minH*60)/60*PX_PER_H;
+        var dur=(r.endMin-r.startMin)/60*PX_PER_H;
+        top=Math.max(0,top);
+        dur=Math.max(20,dur);
+        // clamp to grid
+        if(top+dur>gridH) dur=gridH-top;
         var idx=modalEvents.length; modalEvents.push(r);
-        html+='<div class="cal-event '+evClass(r.type)+'" style="top:'+top+'px;height:'+dur+'px" onclick="showModal('+idx+')">'+
+        html+='<div class="cal-event '+evClass(r.type)+'" style="top:'+top.toFixed(1)+'px;height:'+dur.toFixed(1)+'px" onclick="showModal('+idx+')">'+
           '<div class="ev-title">'+escHtml(r.activity||'—')+'</div>'+
           '<div class="ev-time">'+escHtml(r.time)+'</div>'+
           (r.venue?'<div class="ev-venue">'+escHtml(r.venue)+'</div>':'')+
           '</div>';
       });
+
+      // No-time events stacked at top
+      var noTimeRows=dayRows.filter(function(r){return !r.hasTime;});
+      var noTop=4;
+      noTimeRows.forEach(function(r){
+        var idx=modalEvents.length; modalEvents.push(r);
+        html+='<div class="cal-event ev-notime" style="top:'+noTop+'px;left:2px;right:2px;height:20px" onclick="showModal('+idx+')">'+
+          escHtml(r.activity||'—')+'</div>';
+        noTop+=22;
+      });
+
       html+='</div>';
     });
     html+='</div></div></div></div>';
   });
+
   wrap.innerHTML=html;
 }
 
-function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function showModal(idx){
   var r=modalEvents[idx]; if(!r) return;
   document.getElementById('modalTitle').textContent=r.activity||'수업 정보';
+  var dateDisp=r.date?r.date.slice(5).replace('-','/'):'';
   document.getElementById('modalBody').innerHTML=
-    mrow('일시',(DAY_KO[r.day]||r.day)+' '+(r.date?r.date.slice(5).replace('-','/'):'')+'  '+r.time)+
-    mrow('장소',r.venue||'—')+mrow('유형',r.type||'—')+mrow('도메인',r.domain||'—')+
+    mrow('일시',(DAY_KO[r.day]||r.day)+' '+dateDisp+'  '+r.time)+
+    mrow('장소',r.venue||'—')+
+    mrow('유형',r.type||'—')+
+    mrow('도메인',r.domain||'—')+
     '<div class="modal-row"><span class="modal-key">대상</span><span class="modal-val" style="font-family:\'DM Mono\',monospace;font-size:12px">'+escHtml(r.students)+'</span></div>'+
     '<div class="modal-row"><span class="modal-key">출석</span><span class="modal-val">'+(r.att==='M'?'<span class="badge-m">필수</span>':'<span class="badge-o">선택</span>')+'</span></div>';
   document.getElementById('modalBg').classList.add('open');
 }
-function mrow(k,v){return '<div class="modal-row"><span class="modal-key">'+k+'</span><span class="modal-val">'+escHtml(v)+'</span></div>';}
-function closeModal(e){if(e.target===document.getElementById('modalBg'))document.getElementById('modalBg').classList.remove('open');}
+function mrow(k,v){
+  return '<div class="modal-row"><span class="modal-key">'+k+'</span><span class="modal-val">'+escHtml(v)+'</span></div>';
+}
+function closeModal(e){
+  if(e.target===document.getElementById('modalBg')) document.getElementById('modalBg').classList.remove('open');
+}
 </script>
 </body>
 </html>
