@@ -21,7 +21,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;overscroll-behavior:none}
 
-.header{position:sticky;top:0;z-index:200;background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:14px 18px 10px}
+.header{position:sticky;top:0;z-index:200;background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 18px 8px}
 .header-title{font-size:17px;font-weight:600;letter-spacing:-0.3px}
 .header-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
@@ -35,7 +35,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .upload-sub{font-size:13px;color:var(--muted);line-height:1.6}
 .pwa-hint{margin-top:20px;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:11px 14px;line-height:1.6;text-align:left}
 
-.tabs{display:flex;border-bottom:1px solid var(--border);background:rgba(15,23,42,0.8);position:sticky;top:57px;z-index:100;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tabs{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(15,23,42,0.8);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .tab{flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
 .tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
@@ -114,6 +114,21 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .badge-m{background:rgba(52,211,153,0.15);color:var(--green);padding:3px 10px;border-radius:999px;font-size:12px}
 .badge-o{background:rgba(148,163,184,0.1);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
 
+.now-line{position:absolute;left:0;right:0;height:2px;background:var(--coral);z-index:10;pointer-events:none}
+.now-dot{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--coral)}
+.today-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border2);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:opacity 0.1s}
+.today-card:active{opacity:0.7}
+.today-card.soon{border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.06)}
+.today-card.now{border-color:rgba(251,113,133,0.5);background:rgba(251,113,133,0.06)}
+.today-card.done{opacity:0.4}
+.today-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.tb-soon{background:rgba(251,191,36,0.15);color:var(--amber)}
+.tb-now{background:rgba(251,113,133,0.15);color:var(--coral)}
+.tb-done{background:rgba(148,163,184,0.1);color:var(--muted)}
+.today-title{font-size:15px;font-weight:500;margin-bottom:6px;line-height:1.4}
+.today-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.today-date-header{font-size:12px;font-weight:600;color:var(--blue);letter-spacing:0.06em;text-transform:uppercase;font-family:"DM Mono",monospace;margin-bottom:12px;margin-top:4px}
+.today-empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px;line-height:1.9}
 .reupload-row{display:flex;align-items:center;padding:12px 18px 0}
 .file-chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface2);border-radius:999px;padding:7px 14px;font-size:12px;color:var(--blue);cursor:pointer;border:none;font-family:'DM Sans',sans-serif}
 .file-chip svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
@@ -122,8 +137,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 <body>
 
 <div class="header">
-  <div class="header-title">Timetable</div>
-  <div class="header-sub" id="headerSub">파일을 업로드해서 시작하세요</div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div class="header-title">Timetable</div>
+    <button onclick="toggleLang()" id="langBtn" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.03em"></button>
+  </div>
+  <div class="header-sub" id="headerSub">Upload a file to get started</div>
 </div>
 
 <div id="uploadSection" class="upload-wrap">
@@ -132,29 +150,30 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
     <div class="upload-icon">
       <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </div>
-    <div class="upload-title">시간표 엑셀 업로드</div>
-    <div class="upload-sub">MEDI1101A 시간표 .xlsx 파일<br>업데이트될 때마다 새로 올리면 돼요</div>
+    <div class="upload-title">Upload Timetable Excel</div>
+    <div class="upload-sub">MEDI1101A timetable .xlsx file<br>Re-upload whenever it updates</div>
   </div>
-  <div class="pwa-hint">💡 Safari → 공유버튼 → 홈 화면에 추가 하면 앱처럼 써요</div>
+  <div class="pwa-hint">💡 Safari → Share → "Add to Home Screen" to use as an app</div>
 </div>
 
 <div id="appSection" style="display:none">
   <div class="tabs">
-    <div class="tab active" id="tabBtn0" onclick="switchTab(0)">내 시간표</div>
-    <div class="tab" id="tabBtn1" onclick="switchTab(1)">설정</div>
+    <div class="tab active" id="tabBtn0" onclick="switchTab(0)">My Timetable</div>
+    <div class="tab" id="tabBtn2" onclick="switchTab(2)">Today</div>
+    <div class="tab" id="tabBtn1" onclick="switchTab(1)">Settings</div>
   </div>
 
   <div id="panel0">
     <div class="profile-card" id="profileCard">
       <div class="profile-header">
         <div>
-          <div class="profile-header-left">내 그룹</div>
-          <div class="profile-header-sub" id="profileSub">설정에서 그룹을 선택하세요</div>
+          <div class="profile-header-left">My Groups</div>
+          <div class="profile-header-sub" id="profileSub">Select groups in Settings</div>
         </div>
-        <div class="profile-edit-btn" onclick="switchTab(1)">편집</div>
+        <div class="profile-edit-btn" onclick="switchTab(1)">Edit</div>
       </div>
       <div class="profile-groups" id="profileGroups">
-        <span style="font-size:13px;color:var(--hint)">아직 선택된 그룹이 없어요</span>
+        <span style="font-size:13px;color:var(--hint)">No groups selected yet</span>
       </div>
     </div>
 
@@ -162,28 +181,32 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
     <div class="stats" id="statsRow"></div>
     <div style="height:12px"></div>
     <div class="cal-wrap" id="calWrap">
-      <div class="empty">설정에서 내 그룹을 선택하면<br>시간표가 여기 나와요</div>
+      <div class="empty">Select your groups in Settings<br>to see your timetable here</div>
     </div>
+  </div>
+
+  <div id="panel2" style="display:none">
+    <div id="todayWrap" style="padding:16px 18px 100px"></div>
   </div>
 
   <div id="panel1" style="display:none">
     <div class="reupload-row">
       <button class="file-chip" onclick="document.getElementById('reupload').click()">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span id="fileName">파일 재업로드</span>
+        <span id="fileName">Re-upload file</span>
       </button>
       <input type="file" id="reupload" accept=".xlsx,.xls" style="display:none" onchange="loadFile(event)">
     </div>
     <div class="profile-editor">
       <div class="ed-label">Campus</div>
       <div class="chips" id="ed-campus"></div>
-      <div class="ed-label">PBL 그룹</div>
+      <div class="ed-label">PBL Group</div>
       <div class="chips" id="ed-pbl"></div>
-      <div class="ed-label">CLIN 그룹</div>
+      <div class="ed-label">CLIN Group</div>
       <div class="chips" id="ed-clin"></div>
-      <div class="ed-label">International / 기타</div>
+      <div class="ed-label">International / Other</div>
       <div class="chips" id="ed-intl"></div>
-      <button class="save-btn" onclick="saveProfile()">저장하고 시간표 보기</button>
+      <button class="save-btn" onclick="saveProfile()">Save & View Timetable</button>
     </div>
   </div>
 </div>
@@ -197,6 +220,136 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 </div>
 
 <script>
+var LANG = (function(){ try{ return localStorage.getItem('medi_lang')||'en'; }catch(e){ return 'en'; } })();
+var T = {
+  en: {
+    upload_title: 'Upload Timetable Excel',
+    upload_sub: 'MEDI1101A timetable .xlsx file\nRe-upload whenever it updates',
+    pwa_hint: '💡 Safari → Share → Add to Home Screen to use as an app',
+    tab_timetable: 'My Timetable',
+    tab_settings: 'Settings',
+    my_group: 'My Groups',
+    no_group: 'No groups selected yet',
+    edit_prompt: 'Select groups in Settings',
+    filtering: 'Filtering my classes',
+    edit_btn: 'Edit',
+    campus_label: 'Campus',
+    pbl_label: 'PBL Group',
+    clin_label: 'CLIN Group',
+    intl_label: 'International / Other',
+    week_label: 'Week',
+    save_btn: 'Save & View Timetable',
+    reupload: 'Re-upload file',
+    all_weeks: 'All Weeks',
+    stat_class: 'Classes',
+    stat_days: 'Days',
+    stat_mandatory: 'Mandatory',
+    empty_cal: 'Select your groups in Settings\nto see your timetable',
+    loaded: 'classes loaded',
+    tab_today: 'Today',
+    today_no_class: 'No classes today',
+    today_empty_sub: 'Select your groups in Settings first',
+    today_soon: '⚡ Starting soon',
+    today_now: '● In progress',
+    today_done: 'Done',
+    today_upcoming: 'Upcoming',
+    modal_datetime: 'Date & Time',
+    modal_venue: 'Venue',
+    modal_type: 'Type',
+    modal_domain: 'Domain',
+    modal_students: 'Students',
+    modal_attendance: 'Attendance',
+    modal_mandatory: 'Mandatory',
+    modal_optional: 'Optional',
+    modal_day_mon: 'Mon', modal_day_tue: 'Tue', modal_day_wed: 'Wed',
+    modal_day_thu: 'Thu', modal_day_fri: 'Fri',
+  },
+  ko: {
+    upload_title: '시간표 엑셀 업로드',
+    upload_sub: 'MEDI1101A 시간표 .xlsx 파일\n업데이트될 때마다 새로 올리면 돼요',
+    pwa_hint: '💡 Safari → 공유버튼 → 홈 화면에 추가 하면 앱처럼 써요',
+    tab_timetable: '내 시간표',
+    tab_settings: '설정',
+    my_group: '내 그룹',
+    no_group: '아직 선택된 그룹이 없어요',
+    edit_prompt: '설정에서 그룹을 선택하세요',
+    filtering: '내 수업만 필터링 중',
+    edit_btn: '편집',
+    campus_label: 'Campus',
+    pbl_label: 'PBL 그룹',
+    clin_label: 'CLIN 그룹',
+    intl_label: 'International / 기타',
+    week_label: '주차',
+    save_btn: '저장하고 시간표 보기',
+    reupload: '파일 재업로드',
+    all_weeks: '전체 주차',
+    stat_class: '수업',
+    stat_days: '일자',
+    stat_mandatory: '필수',
+    empty_cal: '설정에서 내 그룹을 선택하면\n시간표가 여기 나와요',
+    loaded: '개 수업 로드됨',
+    tab_today: '오늘',
+    today_no_class: '오늘 수업 없음',
+    today_empty_sub: '설정에서 그룹을 먼저 선택하세요',
+    today_soon: '⚡ 곧 시작',
+    today_now: '● 진행 중',
+    today_done: '완료',
+    today_upcoming: '예정',
+    modal_datetime: '일시',
+    modal_venue: '장소',
+    modal_type: '유형',
+    modal_domain: '도메인',
+    modal_students: '대상',
+    modal_attendance: '출석',
+    modal_mandatory: '필수',
+    modal_optional: '선택',
+  }
+};
+function t(key){ return T[LANG][key]||key; }
+function toggleLang(){
+  LANG = LANG==='en'?'ko':'en';
+  try{ localStorage.setItem('medi_lang', LANG); }catch(e){}
+  document.getElementById('langBtn').textContent = LANG==='en'?'한국어':'English';
+  applyLangStrings();
+}
+function applyLangStrings(){
+  // Static UI elements
+  document.getElementById('tabBtn0').textContent = t('tab_timetable');
+  document.getElementById('tabBtn2').textContent = t('tab_today');
+  document.getElementById('tabBtn1').textContent = t('tab_settings');
+  document.querySelector('.upload-title').textContent = t('upload_title');
+  document.querySelector('.upload-sub').textContent = t('upload_sub');
+  document.querySelector('.pwa-hint').textContent = t('pwa_hint');
+  var sub = document.getElementById('headerSub');
+  if(sub && allRows.length>0){
+    sub.textContent = LANG==='en' ? allRows.length+' '+t('loaded') : allRows.length+t('loaded');
+  } else if(sub) {
+    sub.textContent = LANG==='en' ? 'Upload a file to get started' : '파일을 업로드해서 시작하세요';
+  }
+  // Labels in editor
+  var labels = document.querySelectorAll('.ed-label');
+  var keys = ['campus_label','pbl_label','clin_label','intl_label','week_label'];
+  labels.forEach(function(el,i){ if(keys[i]) el.textContent=t(keys[i]); });
+  // Save button
+  var saveBtn = document.querySelector('.save-btn');
+  if(saveBtn) saveBtn.textContent = t('save_btn');
+  // Reupload
+  var fn = document.getElementById('fileName');
+  // Profile card
+  document.querySelector('.profile-header-left').textContent = t('my_group');
+  document.querySelector('.profile-edit-btn').textContent = t('edit_btn');
+  // Re-render dynamic parts
+  applyProfile();
+  renderWeekFilter();
+  renderStats();
+  renderCal();
+  if(document.getElementById('panel2')&&document.getElementById('panel2').style.display!=='none') renderToday();
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var btn = document.getElementById('langBtn');
+  if(btn) btn.textContent = LANG==='en'?'한국어':'English';
+  applyLangStrings();
+});
 var allRows = [];
 var selStudents = new Set();  // stores PBL:G, CLIN:7 etc
 var selCampus = new Set();    // stores 'Callaghan', 'Central Coast'
@@ -211,17 +364,22 @@ var DAY_NORM = {
   'mon ':'Mon','tue ':'Tue','wed ':'Wed','thu ':'Thu','fri ':'Fri'
 };
 var DAYS = ['Mon','Tue','Wed','Thu','Fri'];
-var DAY_KO = {Mon:'월',Tue:'화',Wed:'수',Thu:'목',Fri:'금'};
+var DAY_KO_KO = {Mon:'월',Tue:'화',Wed:'수',Thu:'목',Fri:'금'};
+var DAY_KO_EN = {Mon:'Mon',Tue:'Tue',Wed:'Wed',Thu:'Thu',Fri:'Fri'};
+function DAY_LABEL(d){ return LANG==='ko' ? DAY_KO_KO[d] : DAY_KO_EN[d]; }
 
 // Saved profile
 var profile = {campus:'',pbl:'',clin:'',intl:false};
 try { var s=localStorage.getItem('medi_profile'); if(s) profile=JSON.parse(s); } catch(e){}
 
 function switchTab(i){
-  [0,1].forEach(function(j){
-    document.getElementById('tabBtn'+j).classList.toggle('active',j===i);
-    document.getElementById('panel'+j).style.display=j===i?'block':'none';
+  [0,1,2].forEach(function(j){
+    var btn=document.getElementById('tabBtn'+j);
+    if(btn) btn.classList.toggle('active',j===i);
+    var panel=document.getElementById('panel'+j);
+    if(panel) panel.style.display=j===i?'block':'none';
   });
+  if(i===2) renderToday();
 }
 
 function loadFile(e){
@@ -320,7 +478,7 @@ function parseData(raw,fname){
   document.getElementById('uploadSection').style.display='none';
   document.getElementById('appSection').style.display='block';
   document.getElementById('fileName').textContent=fname.length>24?fname.slice(0,22)+'…':fname;
-  document.getElementById('headerSub').textContent=allRows.length+'개 수업 로드됨';
+  document.getElementById('headerSub').textContent=LANG==='en'?allRows.length+' '+t('loaded'):allRows.length+t('loaded');
 
   selStudents.clear(); selCampus.clear(); selIntl=false; selWeeks.clear();
   buildEditorChips();
@@ -544,6 +702,15 @@ function saveProfile(){
   switchTab(0);
 }
 
+function renderStats(){
+  var rows=getFiltered();
+  var statsEl=document.getElementById('statsRow');
+  if(!statsEl) return;
+  statsEl.innerHTML=
+    '<div class="stat"><div class="stat-n">'+rows.length+'</div><div class="stat-l">'+t('stat_class')+'</div></div>'+
+    '<div class="stat"><div class="stat-n">'+new Set(rows.map(function(r){return r.date;})).size+'</div><div class="stat-l">'+t('stat_days')+'</div></div>'+
+    '<div class="stat"><div class="stat-n">'+rows.filter(function(r){return r.att==='M';}).length+'</div><div class="stat-l">'+t('stat_mandatory')+'</div></div>';
+}
 function applyProfile(){
   var groups=document.getElementById('profileGroups');
   var tags=[];
@@ -554,11 +721,11 @@ function applyProfile(){
   });
   if(selIntl) tags.push('<span class="profile-tag pt-intl">International</span>');
   if(tags.length===0){
-    groups.innerHTML='<span style="font-size:13px;color:var(--hint)">아직 선택된 그룹이 없어요</span>';
-    document.getElementById('profileSub').textContent='설정에서 그룹을 선택하세요';
+    groups.innerHTML='<span style="font-size:13px;color:var(--hint)">'+t('no_group')+'</span>';
+    document.getElementById('profileSub').textContent=t('edit_prompt');
   } else {
     groups.innerHTML=tags.join('');
-    document.getElementById('profileSub').textContent='내 수업만 필터링 중';
+    document.getElementById('profileSub').textContent=t('filtering');
   }
 }
 
@@ -567,7 +734,7 @@ function renderWeekFilter(){
     .sort(function(a,b){return (parseInt(a)||0)-(parseInt(b)||0);});
   var el=document.getElementById('weekFilterRow'); el.innerHTML='';
   var allBtn=document.createElement('span');
-  allBtn.className='chip s-week'; allBtn.textContent='전체 주차';
+  allBtn.className='chip s-week'; allBtn.textContent=t('all_weeks');
   allBtn.onclick=function(){
     selWeeks.clear();
     el.querySelectorAll('[data-wk]').forEach(function(b){b.className='chip';});
@@ -598,13 +765,13 @@ function renderCal(){
   var rows=getFiltered();
   var statsEl=document.getElementById('statsRow');
   statsEl.innerHTML=
-    '<div class="stat"><div class="stat-n">'+rows.length+'</div><div class="stat-l">수업</div></div>'+
-    '<div class="stat"><div class="stat-n">'+new Set(rows.map(function(r){return r.date;})).size+'</div><div class="stat-l">일자</div></div>'+
-    '<div class="stat"><div class="stat-n">'+rows.filter(function(r){return r.att==='M';}).length+'</div><div class="stat-l">필수</div></div>';
+    '<div class="stat"><div class="stat-n">'+rows.length+'</div><div class="stat-l">'+t('stat_class')+'</div></div>'+
+    '<div class="stat"><div class="stat-n">'+new Set(rows.map(function(r){return r.date;})).size+'</div><div class="stat-l">'+t('stat_days')+'</div></div>'+
+    '<div class="stat"><div class="stat-n">'+rows.filter(function(r){return r.att==='M';}).length+'</div><div class="stat-l">'+t('stat_mandatory')+'</div></div>';
 
   var wrap=document.getElementById('calWrap');
   if(rows.length===0){
-    wrap.innerHTML='<div class="empty">설정에서 내 그룹을 선택하면<br>시간표가 여기 나와요</div>';
+    wrap.innerHTML='<div class="empty">'+t('empty_cal').replace('\\n','<br>')+'</div>';
     return;
   }
 
@@ -665,7 +832,7 @@ function renderCal(){
     DAYS.forEach(function(d){
       var date=dateByDay[d]?dateByDay[d].slice(5).replace('-','/'):'';
       var hasClass=wkRows.some(function(r){return r.day===d;});
-      html+='<div class="cal-day-head"><div class="day-name'+(hasClass?' has-class':'')+'">'+DAY_KO[d]+'</div><div class="day-date">'+date+'</div></div>';
+      html+='<div class="cal-day-head"><div class="day-name'+(hasClass?' has-class':'')+'">'+DAY_LABEL(d)+'</div><div class="day-date">'+date+'</div></div>';
     });
     html+='</div>';
 
@@ -678,7 +845,7 @@ function renderCal(){
 
     // Day columns - always Mon-Fri
     DAYS.forEach(function(d){
-      html+='<div class="day-col" style="height:'+gridH+'px">';
+      html+='<div class="day-col" style="height:'+gridH+'px" data-date="'+(dateByDay[d]||'')+'" data-minh="'+minH+'">';
       for(var h=minH;h<maxH;h++) html+='<div class="hour-line" style="top:'+((h-minH)*PX_PER_H)+'px"></div>';
 
       var dayRows=wkRows.filter(function(r){return r.day===d;});
@@ -715,6 +882,113 @@ function renderCal(){
   });
 
   wrap.innerHTML=html;
+  setTimeout(drawNowLine,50);
+}
+
+// ── TODAY VIEW ──
+function renderToday(){
+  var wrap=document.getElementById('todayWrap');
+  var rows=getFiltered();
+  if(rows.length===0){
+    wrap.innerHTML='<div class="today-empty"><div style="font-size:36px;margin-bottom:12px">📭</div>'+t('today_no_class')+'<br><span style="font-size:13px;color:var(--hint)">'+t('today_empty_sub')+'</span></div>';
+    return;
+  }
+  var now=new Date();
+  var todayStr=localDate(now);
+  // Find today's date in allRows by matching actual calendar date
+  var todayRows=rows.filter(function(r){return r.date===todayStr&&r.hasTime;});
+  var nowMin=now.getHours()*60+now.getMinutes();
+
+  if(todayRows.length===0){
+    // Find next class day
+    var futureRows=rows.filter(function(r){return r.date>todayStr&&r.hasTime;})
+      .sort(function(a,b){return a.date.localeCompare(b.date)||a.startMin-b.startMin;});
+    if(futureRows.length===0){
+      wrap.innerHTML='<div class="today-empty"><div style="font-size:36px;margin-bottom:12px">🎉</div>'+t('today_no_class')+'</div>';
+    } else {
+      var nextDate=futureRows[0].date;
+      var nextRows=futureRows.filter(function(r){return r.date===nextDate;});
+      wrap.innerHTML='<div class="today-date-header">'+formatDate(nextDate,LANG)+'</div>'+
+        nextRows.map(function(r){return todayCardHTML(r,nowMin,nextDate,false);}).join('');
+    }
+    return;
+  }
+
+  wrap.innerHTML='<div class="today-date-header">'+formatDate(todayStr,LANG)+'</div>'+
+    todayRows.sort(function(a,b){return a.startMin-b.startMin;})
+      .map(function(r){return todayCardHTML(r,nowMin,todayStr,true);}).join('');
+}
+
+function localDate(d){
+  var y=d.getFullYear();
+  var m=String(d.getMonth()+1).padStart(2,'0');
+  var dy=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+dy;
+}
+
+function formatDate(dateStr,lang){
+  var p=dateStr.split('-');
+  var d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));
+  var dayNames=lang==='ko'?['일','월','화','수','목','금','토']:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var monthNames=lang==='ko'?['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월']:
+    ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return lang==='ko'
+    ? p[1]+'월 '+p[2]+'일 ('+dayNames[d.getDay()]+')'
+    : dayNames[d.getDay()]+', '+monthNames[d.getMonth()]+' '+parseInt(p[2]);
+}
+
+function todayCardHTML(r,nowMin,dateStr,isToday){
+  var status='upcoming';
+  var badgeHtml='';
+  if(isToday){
+    if(nowMin>=r.startMin&&nowMin<r.endMin){
+      status='now';
+      var remaining=r.endMin-nowMin;
+      badgeHtml='<div class="today-badge tb-now">'+t('today_now')+'</div>';
+    } else if(r.startMin>nowMin&&r.startMin-nowMin<=60){
+      status='soon';
+      var mins=r.startMin-nowMin;
+      badgeHtml='<div class="today-badge tb-soon">'+t('today_soon')+' · '+mins+'min</div>';
+    } else if(r.endMin<=nowMin){
+      status='done';
+      badgeHtml='<div class="today-badge tb-done">'+t('today_done')+'</div>';
+    } else {
+      badgeHtml='<div class="today-badge" style="background:rgba(56,189,248,0.1);color:var(--blue)">'+t('today_upcoming')+'</div>';
+    }
+  }
+  var idx=modalEvents.indexOf(r);
+  if(idx<0){idx=modalEvents.length;modalEvents.push(r);}
+  return '<div class="today-card '+status+'" onclick="showModal('+idx+')">'+
+    badgeHtml+
+    '<div class="today-title">'+escHtml(r.activity||'—')+'</div>'+
+    '<div class="today-meta">'+
+    '<span>'+escHtml(r.time)+'</span>'+
+    (r.venue?'<span>'+escHtml(r.venue)+'</span>':'')+
+    (r.type?'<span>'+escHtml(r.type)+'</span>':'')+
+    (r.att==='M'?'<span style="color:var(--green)">'+t('modal_mandatory')+'</span>':'')+
+    '</div></div>';
+}
+
+// ── NOW LINE on calendar ──
+function drawNowLine(){
+  // Remove existing
+  document.querySelectorAll('.now-line-wrap').forEach(function(el){el.remove();});
+  var now=new Date();
+  var todayStr=localDate(now);
+  var nowMin=now.getHours()*60+now.getMinutes();
+  // Find day column for today
+  document.querySelectorAll('[data-date]').forEach(function(col){
+    if(col.dataset.date!==todayStr) return;
+    var minH=parseInt(col.dataset.minh||8);
+    var top=(nowMin-minH*60)*56/60;
+    if(top<0||top>col.offsetHeight) return;
+    var wrap=document.createElement('div');
+    wrap.className='now-line-wrap';
+    wrap.style.cssText='position:absolute;left:0;right:0;top:'+top+'px;z-index:10;pointer-events:none';
+    wrap.innerHTML='<div class="now-line"><div class="now-dot"></div></div>';
+    col.style.position='relative';
+    col.appendChild(wrap);
+  });
 }
 
 function escHtml(s){
@@ -726,17 +1000,23 @@ function showModal(idx){
   document.getElementById('modalTitle').textContent=r.activity||'수업 정보';
   var dateDisp=r.date?r.date.slice(5).replace('-','/'):'';
   document.getElementById('modalBody').innerHTML=
-    mrow('일시',(DAY_KO[r.day]||r.day)+' '+dateDisp+'  '+r.time)+
-    mrow('장소',r.venue||'—')+
-    mrow('유형',r.type||'—')+
-    mrow('도메인',r.domain||'—')+
-    '<div class="modal-row"><span class="modal-key">대상</span><span class="modal-val" style="font-family:\'DM Mono\',monospace;font-size:12px">'+escHtml(r.students)+'</span></div>'+
-    '<div class="modal-row"><span class="modal-key">출석</span><span class="modal-val">'+(r.att==='M'?'<span class="badge-m">필수</span>':'<span class="badge-o">선택</span>')+'</span></div>';
+    mrow(t('modal_datetime'),DAY_LABEL(r.day)+' '+dateDisp+'  '+r.time)+
+    mrow(t('modal_venue'),r.venue||'—')+
+    mrow(t('modal_type'),r.type||'—')+
+    mrow(t('modal_domain'),r.domain||'—')+
+    '<div class="modal-row"><span class="modal-key">'+t('modal_students')+'</span><span class="modal-val" style="font-family:\'DM Mono\',monospace;font-size:12px">'+escHtml(r.students)+'</span></div>'+
+    '<div class="modal-row"><span class="modal-key">'+t('modal_attendance')+'</span><span class="modal-val">'+(r.att==='M'?'<span class="badge-m">'+t('modal_mandatory')+'</span>':'<span class="badge-o">'+t('modal_optional')+'</span>')+'</span></div>';
   document.getElementById('modalBg').classList.add('open');
 }
 function mrow(k,v){
   return '<div class="modal-row"><span class="modal-key">'+k+'</span><span class="modal-val">'+escHtml(v)+'</span></div>';
 }
+setInterval(function(){
+  drawNowLine();
+  // refresh today tab if open
+  if(document.getElementById('panel2').style.display!=='none') renderToday();
+},60000);
+
 function closeModal(e){
   if(e.target===document.getElementById('modalBg')) document.getElementById('modalBg').classList.remove('open');
 }
