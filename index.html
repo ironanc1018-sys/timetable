@@ -21,7 +21,7 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;overscroll-behavior:none}
 
-.header{position:sticky;top:0;z-index:200;background:rgba(15,23,42,0.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 18px 8px}
+.header{position:sticky;top:0;z-index:200;background:#0f172a;padding:12px 18px 8px;border-bottom:1px solid var(--border)}
 .header-title{font-size:17px;font-weight:600;letter-spacing:-0.3px}
 .header-sub{font-size:12px;color:var(--muted);margin-top:2px}
 
@@ -35,11 +35,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .upload-sub{font-size:13px;color:var(--muted);line-height:1.6}
 .pwa-hint{margin-top:20px;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:11px 14px;line-height:1.6;text-align:left}
 
-.tabs{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(15,23,42,0.8);position:sticky;top:0;z-index:100;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tabs{display:flex;border-bottom:1px solid var(--border);background:#0f172a;position:sticky;top:0;z-index:100;}
 .tab{flex:1;padding:11px 0;text-align:center;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s}
 .tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 
-.profile-card{margin:16px 18px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border2);overflow:hidden}
+.profile-card{margin:16px 18px;background:var(--surface);border-radius:var(--radius);border:1px solid var(--border2);overflow:hidden;position:relative;z-index:1}
 .profile-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
 .profile-header-left{font-size:14px;font-weight:600;color:var(--text)}
 .profile-header-sub{font-size:12px;color:var(--muted);margin-top:2px}
@@ -85,7 +85,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .day-date{font-size:10px;color:var(--hint);margin-top:1px}
 .cal-body{display:grid}
 .time-cell{height:56px;display:flex;align-items:flex-start;padding:4px 5px 0;font-size:10px;color:var(--hint);font-family:'DM Mono',monospace;border-right:1px solid var(--border);border-bottom:1px solid var(--border);white-space:nowrap}
-.day-col{position:relative;border-right:1px solid var(--border)}
+.day-col{position:relative;border-right:1px solid var(--border);overflow:visible}
 .day-col:last-child{border-right:none}
 .hour-line{position:absolute;left:0;right:0;height:1px;background:var(--border);pointer-events:none}
 .cal-event{position:absolute;left:2px;right:2px;border-radius:var(--radius-xs);padding:4px 6px;font-size:11px;line-height:1.3;overflow:hidden;cursor:pointer}
@@ -114,8 +114,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 .badge-m{background:rgba(52,211,153,0.15);color:var(--green);padding:3px 10px;border-radius:999px;font-size:12px}
 .badge-o{background:rgba(148,163,184,0.1);color:var(--muted);padding:3px 10px;border-radius:999px;font-size:12px}
 
-.now-line{position:absolute;left:0;right:0;height:2px;background:var(--coral);z-index:10;pointer-events:none}
-.now-dot{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:var(--coral)}
+.now-line-wrap{position:absolute;left:0;right:0;z-index:10;pointer-events:none}
 .today-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border2);padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:opacity 0.1s}
 .today-card:active{opacity:0.7}
 .today-card.soon{border-color:rgba(251,191,36,0.5);background:rgba(251,191,36,0.06)}
@@ -158,12 +157,12 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
 
 <div id="appSection" style="display:none">
   <div class="tabs">
-    <div class="tab active" id="tabBtn0" onclick="switchTab(0)">My Timetable</div>
-    <div class="tab" id="tabBtn2" onclick="switchTab(2)">Today</div>
+    <div class="tab" id="tabBtn0" onclick="switchTab(0)">My Timetable</div>
+    <div class="tab active" id="tabBtn2" onclick="switchTab(2)">Today</div>
     <div class="tab" id="tabBtn1" onclick="switchTab(1)">Settings</div>
   </div>
 
-  <div id="panel0">
+  <div id="panel0" style="display:none;background:var(--bg)">
     <div class="profile-card" id="profileCard">
       <div class="profile-header">
         <div>
@@ -185,7 +184,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM San
     </div>
   </div>
 
-  <div id="panel2" style="display:none">
+  <div id="panel2">
     <div id="todayWrap" style="padding:16px 18px 100px"></div>
   </div>
 
@@ -253,6 +252,7 @@ var T = {
     today_now: '● In progress',
     today_done: 'Done',
     today_upcoming: 'Upcoming',
+    today_flexible: 'Flexible / Check group',
     modal_datetime: 'Date & Time',
     modal_venue: 'Venue',
     modal_type: 'Type',
@@ -295,6 +295,7 @@ var T = {
     today_now: '● 진행 중',
     today_done: '완료',
     today_upcoming: '예정',
+    today_flexible: '자율 / 그룹 확인',
     modal_datetime: '일시',
     modal_venue: '장소',
     modal_type: '유형',
@@ -380,6 +381,7 @@ function switchTab(i){
     if(panel) panel.style.display=j===i?'block':'none';
   });
   if(i===2) renderToday();
+  if(i===0) setTimeout(drawNowLine,100);
 }
 
 function loadFile(e){
@@ -485,6 +487,7 @@ function parseData(raw,fname){
   applyProfile();
   renderWeekFilter();
   renderCal();
+  renderToday();
 }
 
 // ── TIME PARSING ──
@@ -896,27 +899,20 @@ function renderToday(){
   var now=new Date();
   var todayStr=localDate(now);
   // Find today's date in allRows by matching actual calendar date
-  var todayRows=rows.filter(function(r){return r.date===todayStr&&r.hasTime;});
+  var todayTimedRows=rows.filter(function(r){return r.date===todayStr&&r.hasTime;});
+  var todayNoTimeRows=rows.filter(function(r){return r.date===todayStr&&!r.hasTime;});
+  var todayRows=todayTimedRows;
   var nowMin=now.getHours()*60+now.getMinutes();
 
-  if(todayRows.length===0){
-    // Find next class day
-    var futureRows=rows.filter(function(r){return r.date>todayStr&&r.hasTime;})
-      .sort(function(a,b){return a.date.localeCompare(b.date)||a.startMin-b.startMin;});
-    if(futureRows.length===0){
-      wrap.innerHTML='<div class="today-empty"><div style="font-size:36px;margin-bottom:12px">🎉</div>'+t('today_no_class')+'</div>';
-    } else {
-      var nextDate=futureRows[0].date;
-      var nextRows=futureRows.filter(function(r){return r.date===nextDate;});
-      wrap.innerHTML='<div class="today-date-header">'+formatDate(nextDate,LANG)+'</div>'+
-        nextRows.map(function(r){return todayCardHTML(r,nowMin,nextDate,false);}).join('');
-    }
+  if(todayRows.length===0&&todayNoTimeRows.length===0){
+    wrap.innerHTML='<div class="today-date-header">'+formatDate(todayStr,LANG)+'</div>'+
+      '<div class="today-empty"><div style="font-size:36px;margin-bottom:12px">🎉</div>'+t('today_no_class')+'</div>';
     return;
   }
 
+  var allToday=todayRows.sort(function(a,b){return a.startMin-b.startMin;}).concat(todayNoTimeRows);
   wrap.innerHTML='<div class="today-date-header">'+formatDate(todayStr,LANG)+'</div>'+
-    todayRows.sort(function(a,b){return a.startMin-b.startMin;})
-      .map(function(r){return todayCardHTML(r,nowMin,todayStr,true);}).join('');
+    allToday.map(function(r){return todayCardHTML(r,nowMin,todayStr,true);}).join('');
 }
 
 function localDate(d){
@@ -940,10 +936,25 @@ function formatDate(dateStr,lang){
 function todayCardHTML(r,nowMin,dateStr,isToday){
   var status='upcoming';
   var badgeHtml='';
+
+  // No-time rows: self-directed, refer to PBL, etc.
+  if(!r.hasTime){
+    var timeDisplay=r.time&&r.time.trim()?r.time:'—';
+    var idx=modalEvents.indexOf(r);
+    if(idx<0){idx=modalEvents.length;modalEvents.push(r);}
+    return '<div class="today-card" style="border-style:dashed;opacity:0.75" onclick="showModal('+idx+')">'+
+      '<div class="today-badge" style="background:rgba(148,163,184,0.1);color:var(--muted)">'+t('today_flexible')+'</div>'+
+      '<div class="today-title">'+escHtml(r.activity||'—')+'</div>'+
+      '<div class="today-meta">'+
+      '<span style="font-style:italic">'+escHtml(timeDisplay)+'</span>'+
+      (r.venue?'<span>'+escHtml(r.venue)+'</span>':'')+
+      (r.type?'<span>'+escHtml(r.type)+'</span>':'')+
+      '</div></div>';
+  }
+
   if(isToday){
     if(nowMin>=r.startMin&&nowMin<r.endMin){
       status='now';
-      var remaining=r.endMin-nowMin;
       badgeHtml='<div class="today-badge tb-now">'+t('today_now')+'</div>';
     } else if(r.startMin>nowMin&&r.startMin-nowMin<=60){
       status='soon';
@@ -971,23 +982,24 @@ function todayCardHTML(r,nowMin,dateStr,isToday){
 
 // ── NOW LINE on calendar ──
 function drawNowLine(){
-  // Remove existing
   document.querySelectorAll('.now-line-wrap').forEach(function(el){el.remove();});
   var now=new Date();
   var todayStr=localDate(now);
   var nowMin=now.getHours()*60+now.getMinutes();
-  // Find day column for today
-  document.querySelectorAll('[data-date]').forEach(function(col){
-    if(col.dataset.date!==todayStr) return;
-    var minH=parseInt(col.dataset.minh||8);
+  var cols=document.querySelectorAll('.day-col[data-date]');
+  cols.forEach(function(col){
+    if(col.getAttribute('data-date')!==todayStr) return;
+    var minH=parseInt(col.getAttribute('data-minh')||'8');
     var top=(nowMin-minH*60)*56/60;
     if(top<0||top>col.offsetHeight) return;
-    var wrap=document.createElement('div');
-    wrap.className='now-line-wrap';
-    wrap.style.cssText='position:absolute;left:0;right:0;top:'+top+'px;z-index:10;pointer-events:none';
-    wrap.innerHTML='<div class="now-line"><div class="now-dot"></div></div>';
-    col.style.position='relative';
-    col.appendChild(wrap);
+    var line=document.createElement('div');
+    line.className='now-line-wrap';
+    line.style.cssText='position:absolute;left:-1px;right:0;top:'+Math.round(top)+'px;z-index:20;pointer-events:none;display:flex;align-items:center;';
+    // Subtle pink/purple dot + fading line matching app color
+    line.innerHTML=
+      '<div style="width:6px;height:6px;border-radius:50%;background:#a78bfa;box-shadow:0 0 6px rgba(167,139,250,0.8);flex-shrink:0;"></div>'+
+      '<div style="flex:1;height:1px;background:linear-gradient(to right,rgba(167,139,250,0.7),rgba(167,139,250,0.05));"></div>';
+    col.appendChild(line);
   });
 }
 
