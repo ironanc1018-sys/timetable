@@ -1042,14 +1042,16 @@ var _swipeTabOrder=[0,2,1];
 var _swipeStartX=0,_swipeStartY=0,_swipeStartTime=0;
 
 document.addEventListener('DOMContentLoaded',function(){
-  var el=document.getElementById('appSection');
-  if(!el) return;
-  el.addEventListener('touchstart',function(e){
+  // Attach to document so swipe works everywhere including header/tabs
+  document.addEventListener('touchstart',function(e){
+    // Ignore if upload section visible
+    if(document.getElementById('uploadSection').style.display!=='none') return;
     _swipeStartX=e.touches[0].clientX;
     _swipeStartY=e.touches[0].clientY;
     _swipeStartTime=Date.now();
   },{passive:true});
-  el.addEventListener('touchend',function(e){
+  document.addEventListener('touchend',function(e){
+    if(document.getElementById('uploadSection').style.display!=='none') return;
     var dx=e.changedTouches[0].clientX-_swipeStartX;
     var dy=e.changedTouches[0].clientY-_swipeStartY;
     var dt=Date.now()-_swipeStartTime;
