@@ -376,6 +376,7 @@ var profile = {campus:'',pbl:'',clin:'',intl:false};
 try { var s=localStorage.getItem('medi_profile'); if(s) profile=JSON.parse(s); } catch(e){}
 
 function switchTab(i){
+  _swipeCurrentTab=i;
   [0,1,2].forEach(function(j){
     var btn=document.getElementById('tabBtn'+j);
     if(btn) btn.classList.toggle('active',j===i);
@@ -1036,36 +1037,28 @@ function closeModal(e){
 }
 
 // ── SWIPE GESTURE ──
-(function(){
-  var startX=0, startY=0, startTime=0;
-  var TAB_ORDER=[0,2,1]; // My Timetable, Today, Settings
-  var currentTab=2; // default Today
+var _swipeCurrentTab=2;
+var _swipeTabOrder=[0,2,1];
+var _swipeStartX=0,_swipeStartY=0,_swipeStartTime=0;
 
-  // Override switchTab to track current
-  var _origSwitch=switchTab;
-  switchTab=function(i){
-    currentTab=i;
-    _origSwitch(i);
-  };
-
+document.addEventListener('DOMContentLoaded',function(){
   var el=document.getElementById('appSection');
+  if(!el) return;
   el.addEventListener('touchstart',function(e){
-    startX=e.touches[0].clientX;
-    startY=e.touches[0].clientY;
-    startTime=Date.now();
+    _swipeStartX=e.touches[0].clientX;
+    _swipeStartY=e.touches[0].clientY;
+    _swipeStartTime=Date.now();
   },{passive:true});
-
   el.addEventListener('touchend',function(e){
-    var dx=e.changedTouches[0].clientX-startX;
-    var dy=e.changedTouches[0].clientY-startY;
-    var dt=Date.now()-startTime;
-    // Must be fast, mostly horizontal, and long enough
+    var dx=e.changedTouches[0].clientX-_swipeStartX;
+    var dy=e.changedTouches[0].clientY-_swipeStartY;
+    var dt=Date.now()-_swipeStartTime;
     if(dt>400||Math.abs(dx)<50||Math.abs(dy)>Math.abs(dx)*0.7) return;
-    var idx=TAB_ORDER.indexOf(currentTab);
-    if(dx<0&&idx<TAB_ORDER.length-1) switchTab(TAB_ORDER[idx+1]); // swipe left = next
-    if(dx>0&&idx>0) switchTab(TAB_ORDER[idx-1]); // swipe right = prev
+    var idx=_swipeTabOrder.indexOf(_swipeCurrentTab);
+    if(dx<0&&idx<_swipeTabOrder.length-1) switchTab(_swipeTabOrder[idx+1]);
+    if(dx>0&&idx>0) switchTab(_swipeTabOrder[idx-1]);
   },{passive:true});
-})();
+});
 </script>
 </body>
 </html>
