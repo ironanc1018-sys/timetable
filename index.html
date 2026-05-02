@@ -494,42 +494,54 @@ function parseData(raw,fname){
 }
 
 // ── TIME PARSING ──
-// Handles: 9am-12pm, 9.00am-10.30am, 1.00pm-2.30pm, 10:30am-12md, 8:30am-10.00am
+// Handles all formats: 9:00-10:00am, 9am-12pm, 9.00am-10.30am, 1:30-2:30pm, 12md, etc.
 function parseTimeRange(t){
   if(!t||typeof t!=='string') return [0,0,false];
   t=t.trim().toLowerCase();
 
   // Non-time entries
-  if(t.includes('self')||t.includes('refer')||t.includes('directed')||t.includes('tbc')) return [0,0,false];
+  if(t.includes('self')||t.includes('refer')||t.includes('directed')||t.includes('tbc')||t.includes('tba')) return [0,0,false];
 
   // Handle 12md/12noon = 12:00pm
   t=t.replace(/12md/g,'12:00pm').replace(/12noon/g,'12:00pm');
 
-  // Normalize dots to colons: 9.00 -> 9:00, 10.30 -> 10:30
-  t=t.replace(/(\d{1,2})\.(\d{2})/g,function(_,h,mn){return h+':'+mn;});
+  // Normalize dots to colons in time patterns: 9.00am -> 9:00am, 10.30pm -> 10:30pm
+  t=t.replace(/(\d{1,2})\.(\d{2})\s*(am|pm)/gi,function(_,h,mn,ap){return h+':'+mn+ap;});
 
-  // Find all time tokens - with OR without minutes: 9am, 9:00am, 10:30pm
-  var tokens=[];
-  var re=/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/gi;
-  var m;
-  while((m=re.exec(t))!==null){
-    tokens.push({h:parseInt(m[1]),mn:m[2]?parseInt(m[2]):0,ap:m[3].toLowerCase()});
-  }
-  if(tokens.length<2) return [0,0,false];
+  // Normalize spacing around dash: '9:00-10:00' -> '9:00 - 10:00'
+  t=t.replace(/(\d)\s*-\s*(\d)/g,'$1 - $2');
 
-  function toMin(tok){
-    var h=tok.h, mn=tok.mn, ap=tok.ap;
+  function toMin(h,mn,ap){
+    h=parseInt(h); mn=mn?parseInt(mn):0; ap=(ap||'').toLowerCase();
     if(ap==='pm'&&h!==12) h+=12;
     if(ap==='am'&&h===12) h=0;
     return h*60+mn;
   }
 
-  var start=toMin(tokens[0]);
-  var end=toMin(tokens[1]);
+  // Pass 1: tokens WITH am/pm (most reliable)
+  var tokAmpm=[], reAmpm=/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/gi, m;
+  while((m=reAmpm.exec(t))!==null) tokAmpm.push([m[1],m[2],m[3]]);
+
+  // Pass 2: colon tokens (may lack am/pm - e.g. '9:00 - 10:00am')
+  var tokColon=[], reColon=/(\d{1,2}):(\d{2})\s*(am|pm)?/gi;
+  while((m=reColon.exec(t))!==null) tokColon.push([m[1],m[2],m[3]||'']);
+
+  var start,end;
+  if(tokAmpm.length>=2){
+    start=toMin(tokAmpm[0][0],tokAmpm[0][1],tokAmpm[0][2]);
+    end=toMin(tokAmpm[1][0],tokAmpm[1][1],tokAmpm[1][2]);
+  } else if(tokColon.length>=2){
+    // inherit am/pm from whichever token has it
+    var ap1=tokColon[0][2], ap2=tokColon[1][2];
+    if(!ap1&&ap2) ap1=ap2;
+    start=toMin(tokColon[0][0],tokColon[0][1],ap1);
+    end=toMin(tokColon[1][0],tokColon[1][1],ap2);
+  } else {
+    return [0,0,false];
+  }
 
   if(end<=start) end+=12*60;
-  if(end-start>8*60) return [0,0,false]; // unreasonable, skip
-
+  if(end-start>8*60) return [0,0,false];
   return [start,end,true];
 }
 
