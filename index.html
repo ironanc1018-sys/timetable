@@ -531,11 +531,16 @@ function parseTimeRange(t){
     start=toMin(tokAmpm[0][0],tokAmpm[0][1],tokAmpm[0][2]);
     end=toMin(tokAmpm[1][0],tokAmpm[1][1],tokAmpm[1][2]);
   } else if(tokColon.length>=2){
-    // inherit am/pm from whichever token has it
     var ap1=tokColon[0][2], ap2=tokColon[1][2];
-    if(!ap1&&ap2) ap1=ap2;
-    start=toMin(tokColon[0][0],tokColon[0][1],ap1);
-    end=toMin(tokColon[1][0],tokColon[1][1],ap2);
+    if(!ap1&&ap2){
+      // Try inheriting ap2 for start - but if start>=end it means start is actually AM
+      var sInherit=toMin(tokColon[0][0],tokColon[0][1],ap2);
+      end=toMin(tokColon[1][0],tokColon[1][1],ap2);
+      start=(sInherit>=end)?toMin(tokColon[0][0],tokColon[0][1],'am'):sInherit;
+    } else {
+      start=toMin(tokColon[0][0],tokColon[0][1],ap1);
+      end=toMin(tokColon[1][0],tokColon[1][1],ap2);
+    }
   } else {
     return [0,0,false];
   }
