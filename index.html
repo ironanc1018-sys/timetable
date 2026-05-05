@@ -604,16 +604,16 @@ function normalizeStudents(s){
 function rowMatches(row){
   var tokens=row.studentsNorm;
 
-  // ALL always matches
-  if(tokens.indexOf('ALL')>=0) return true;
-
-  // Campus filter
+  // Campus filter FIRST - must pass before anything else
   var campusOk=true;
   if(selCampus.size>0){
     var c=row.campus;
     campusOk=(c==='Both'||[...selCampus].some(function(sc){return c.includes(sc);}));
     if(!campusOk) return false;
   }
+
+  // ALL matches only if campus filter passed
+  if(tokens.indexOf('ALL')>=0) return true;
 
   // CAL-ALL matches if Callaghan selected (or no campus filter)
   if(tokens.indexOf('CAL-ALL')>=0&&(selCampus.has('Callaghan')||selCampus.size===0)) return true;
