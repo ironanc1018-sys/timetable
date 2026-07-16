@@ -404,7 +404,7 @@ function parseData(raw,fname){
   for(var i=0;i<raw.length;i++){
     var r=raw[i];
     if(r.some(function(c){return String(c).trim().toLowerCase()==='campus';})&&
-       r.some(function(c){return String(c).toLowerCase().includes('student');})){hdrRow=i;break;}
+       r.some(function(c){return String(c).toLowerCase().includes('student')||String(c).toLowerCase()==='session';})){hdrRow=i;break;}
   }
   if(hdrRow<0){alert('헤더를 찾을 수 없어요.');return;}
   var hdrs=raw[hdrRow].map(function(h){return String(h).trim().toLowerCase();});
@@ -420,12 +420,14 @@ function parseData(raw,fname){
     type:   fi(function(h){return h==='type';}),
     domain: fi(function(h){return h==='domain';}),
     att:    fi(function(h){return h.includes('attend');}),
-    activity: fi(function(h){return h.includes('name of activity')||h==='activity';}),
+    activity: fi(function(h){return h.includes('name of activity')||h==='activity'||h==='session';}),
   };
+  var DAY_LABELS=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
   allRows=[];
   for(var i=hdrRow+1;i<raw.length;i++){
     var r=raw[i];
     var campus=String(r[ci.campus]||'').trim().replace(/\n/g,' ').replace(/\s+/g,' ');
+    if(DAY_LABELS.indexOf(campus.toUpperCase())>=0) continue;
     var cL=campus.toLowerCase();
     if(!cL.includes('callaghan')&&!cL.includes('central coast')) continue;
 
@@ -560,11 +562,11 @@ function normalizeStudents(s){
 
   // Step 1: Extract PBL multi-letter blocks BEFORE splitting by comma
   // e.g. "PBL: E,G,I,K,M,N,O,P" must be handled as one unit
-  var pblBlockRe=/PBL:\s*([A-Z](?:\s*,\s*[A-Z])+)/gi;
+  var pblBlockRe=/PBL:\s*([A-Z](?:[\s]*[,+&][\s]*[A-Z])+)/gi;
   raw=raw.replace(pblBlockRe,function(match,letters){
-    letters.split(',').forEach(function(l){
+    letters.split(/[,+]/).forEach(function(l){
       l=l.trim().toUpperCase();
-      if(l) tokens.push('PBL:'+l);
+      if(l&&/^[A-Z]$/.test(l)) tokens.push('PBL:'+l);
     });
     return '';
   });
@@ -576,7 +578,7 @@ function normalizeStudents(s){
     commaParts.forEach(function(sp){
       sp=sp.trim().replace(/\s+/g,' ');
       if(!sp) return;
-      sp=sp.replace(/\s+\d+-\d+$/,'').trim();
+      sp=sp.replace(/[+]?[A-Z]?\d+-\d+$/,'').trim();
       if(!sp) return;
       sp=sp.replace(/CAL\s*-\s*ALL/gi,'CAL-ALL').replace(/CC\s*-\s*ALL/gi,'CC-ALL');
 
