@@ -548,7 +548,7 @@ function parseTimeRange(t){
   }
 
   if(end<=start) end+=12*60;
-  if(end-start>8*60) return [0,0,false];
+  if(end-start>7*60) return [0,0,false];
   return [start,end,true];
 }
 
@@ -562,7 +562,7 @@ function normalizeStudents(s){
 
   // Step 1: Extract PBL multi-letter blocks BEFORE splitting by comma
   // e.g. "PBL: E,G,I,K,M,N,O,P" must be handled as one unit
-  var pblBlockRe=/PBL:\s*([A-Z](?:[\s]*[,+&][\s]*[A-Z])+)/gi;
+  var pblBlockRe=/PBL:\s*([A-Z](?:[\s]*[,+&][\s]*[A-Z](?![0-9\s]*\d))+)/gi;
   raw=raw.replace(pblBlockRe,function(match,letters){
     letters.split(/[,+]/).forEach(function(l){
       l=l.trim().toUpperCase();
@@ -578,7 +578,7 @@ function normalizeStudents(s){
     commaParts.forEach(function(sp){
       sp=sp.trim().replace(/\s+/g,' ');
       if(!sp) return;
-      sp=sp.replace(/[+]?[A-Z]?\d+-\d+$/,'').trim();
+      sp=sp.replace(/[+]?[A-Z]?\s*\d+-\d+$/,'').trim();
       if(!sp) return;
       sp=sp.replace(/CAL\s*-\s*ALL/gi,'CAL-ALL').replace(/CC\s*-\s*ALL/gi,'CC-ALL');
 
